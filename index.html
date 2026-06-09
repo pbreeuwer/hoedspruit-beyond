@@ -1,0 +1,2086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hoedspruit & Beyond — Curated Experiences in the Greater Kruger</title>
+<meta name="description" content="Book game drives, zip-lining, rafting, ATV, lodges, restaurants and more in Hoedspruit, South Africa. Curated, verified, personally recommended.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+/* ── GLOBAL IMAGE FIT: all bg image divs auto-fit with cover ── */
+[class*="-bg"], [class*="img-bg"], .hero-bg, .featured-img-bg,
+.stay-bg, .region-img-bg, .blog-img-bg, .dining-modal-hero-bg,
+.detail-hero-bg, .page-header {
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+}
+
+:root{--sand:#c9a96e;--sand-light:#e8d5b0;--sand-pale:#f5ede0;--earth:#6b4c2a;--earth-dark:#3d2a14;--dusk:#1a1510;--dusk-mid:#2e2318;--ivory:#faf6ef;--text:#2e2318;--text-light:#7a6a55;--accent:#c0392b;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Jost',sans-serif;background:var(--ivory);color:var(--text);font-weight:300;overflow-x:hidden;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;transition:background .4s,padding .4s;}
+nav.scrolled{background:rgba(26,21,16,.96);padding:1rem 4rem;backdrop-filter:blur(8px);}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;color:var(--sand-light);letter-spacing:.08em;text-decoration:none;}
+.nav-logo span{color:var(--sand);font-style:italic;}
+.nav-links{display:flex;gap:2rem;list-style:none;}
+.nav-links a{color:var(--sand-light);text-decoration:none;font-size:.75rem;letter-spacing:.16em;text-transform:uppercase;opacity:.8;transition:opacity .2s;}
+.nav-links a:hover{opacity:1;}
+.nav-cta{background:transparent;border:1px solid var(--sand);color:var(--sand);padding:.5rem 1.4rem;font-family:'Jost',sans-serif;font-size:.73rem;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;transition:background .25s,color .25s;}
+.nav-cta:hover{background:var(--sand);color:var(--dusk);}
+
+/* HERO */
+.hero{position:relative;height:100vh;min-height:700px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.hero-bg-fallback{position:absolute;inset:0;background:linear-gradient(180deg,#1a1510 0%,#3d2a14 15%,#8b5e2a 35%,#c9823e 50%,#e8a84a 60%,#7a8c6e 70%,#4a6b3e 80%,#2d4a28 100%);}
+.hero-bg{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(26,21,16,.3) 0%,rgba(26,21,16,.05) 35%,rgba(26,21,16,.75) 100%),url('images/region-1.jpg') center/cover no-repeat;transform:scale(1.05);animation:heroZoom 12s ease-out forwards;}
+@keyframes heroZoom{from{transform:scale(1.05);}to{transform:scale(1);}}
+.hero-content{position:relative;text-align:center;color:white;padding:0 2rem;animation:heroFade 1.2s ease-out .3s both;z-index:2;}
+@keyframes heroFade{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+.hero-eyebrow{font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:var(--sand);margin-bottom:1.4rem;}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(3.5rem,8vw,7rem);font-weight:300;line-height:.95;margin-bottom:1.8rem;text-shadow:0 2px 30px rgba(0,0,0,.4);}
+.hero-title em{font-style:italic;color:var(--sand-light);}
+.hero-subtitle{font-size:.95rem;font-weight:300;color:rgba(255,255,255,.85);max-width:540px;margin:0 auto 2.8rem;line-height:1.85;}
+.hero-actions{display:flex;gap:1.2rem;justify-content:center;flex-wrap:wrap;}
+.btn-primary{background:var(--sand);color:var(--dusk);border:none;padding:.9rem 2.6rem;font-family:'Jost',sans-serif;font-size:.78rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:background .25s,transform .2s;text-decoration:none;display:inline-block;}
+.btn-primary:hover{background:var(--sand-light);transform:translateY(-1px);}
+.btn-secondary{background:transparent;color:white;border:1px solid rgba(255,255,255,.5);padding:.9rem 2.6rem;font-family:'Jost',sans-serif;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:border-color .25s,color .25s;text-decoration:none;display:inline-block;}
+.btn-secondary:hover{border-color:var(--sand);color:var(--sand);}
+.hero-scroll{position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.5rem;color:rgba(255,255,255,.5);font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;animation:scrollBob 2s ease-in-out infinite;}
+.hero-scroll::after{content:'';width:1px;height:40px;background:linear-gradient(to bottom,rgba(255,255,255,.5),transparent);}
+@keyframes scrollBob{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(6px);}}
+
+/* TRUST */
+.trust-section{background:var(--dusk);padding:5rem 4rem;}
+.trust-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;margin-top:3rem;}
+.trust-card{text-align:center;padding:2rem 1.5rem;border:1px solid rgba(201,169,110,.12);transition:border-color .3s,background .3s;}
+.trust-card:hover{border-color:rgba(201,169,110,.35);background:rgba(201,169,110,.04);}
+.trust-icon{font-size:2rem;margin-bottom:1.2rem;}
+.trust-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--sand-light);margin-bottom:.6rem;}
+.trust-body{font-size:.82rem;color:rgba(232,213,176,.55);line-height:1.75;}
+
+/* STATS */
+.stats-strip{background:var(--earth-dark);padding:3rem 4rem;display:flex;align-items:center;justify-content:center;gap:4rem;flex-wrap:wrap;}
+.strip-item{text-align:center;color:var(--sand-light);}
+.strip-num{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:300;color:var(--sand);line-height:1;}
+.strip-label{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;opacity:.6;margin-top:.3rem;}
+.strip-divider{width:1px;height:50px;background:rgba(201,169,110,.2);}
+
+/* SHARED */
+.section-label{font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;color:var(--sand);margin-bottom:.8rem;}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,4vw,3.5rem);font-weight:300;line-height:1.1;color:var(--earth-dark);margin-bottom:1.2rem;}
+.section-title em{font-style:italic;}
+.section-body{font-size:.95rem;line-height:1.85;color:var(--text-light);max-width:520px;}
+
+/* SEARCH BAR */
+.search-bar-wrap{background:white;padding:2rem 4rem;border-bottom:1px solid var(--sand-pale);position:sticky;top:65px;z-index:90;box-shadow:0 2px 20px rgba(61,42,20,.06);}
+.search-inner{display:flex;gap:1rem;align-items:center;max-width:900px;margin:0 auto;}
+.search-input-wrap{flex:1;position:relative;}
+.search-input-wrap::before{content:'🔍';position:absolute;left:1rem;top:50%;transform:translateY(-50%);font-size:.85rem;pointer-events:none;}
+.search-input{width:100%;border:1px solid rgba(107,76,42,.2);padding:.75rem 1rem .75rem 2.5rem;font-family:'Jost',sans-serif;font-size:.9rem;color:var(--text);outline:none;background:var(--ivory);transition:border-color .2s;}
+.search-input:focus{border-color:var(--sand);}
+.view-toggle{display:flex;border:1px solid rgba(107,76,42,.2);overflow:hidden;}
+.view-btn{background:transparent;border:none;padding:.6rem 1rem;cursor:pointer;font-size:.9rem;color:var(--text-light);transition:background .2s,color .2s;}
+.view-btn.active{background:var(--earth-dark);color:var(--sand-light);}
+
+/* ACTIVITIES */
+.activities-section{padding:5rem 4rem;background:var(--ivory);}
+.activities-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2.5rem;flex-wrap:wrap;gap:1.5rem;}
+.filter-tabs{display:flex;gap:.6rem;flex-wrap:wrap;}
+.filter-tab{background:transparent;border:1px solid rgba(107,76,42,.25);color:var(--text-light);padding:.45rem 1.2rem;font-family:'Jost',sans-serif;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:all .2s;}
+.filter-tab.active,.filter-tab:hover{background:var(--earth);border-color:var(--earth);color:var(--sand-light);}
+.activity-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:2rem;}
+.activity-card{background:white;overflow:hidden;cursor:pointer;transition:transform .3s,box-shadow .3s;}
+.activity-card:hover{transform:translateY(-4px);box-shadow:0 20px 50px rgba(61,42,20,.15);}
+.activity-card.hidden{display:none;}
+
+/* CARD IMG */
+.card-img{position:relative;height:230px;overflow:hidden;}
+.card-img-bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .6s ease;}
+.activity-card:hover .card-img-bg{transform:scale(1.06);}
+.card-img-icon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:3.5rem;opacity:.2;pointer-events:none;}
+.bg-gamedrive{background:linear-gradient(135deg,#4a3520 0%,#8b6340 30%,#c4924a 55%,#e8c878 70%,#3d6b2a 85%,#1a3810 100%);}
+.bg-zipline{background:linear-gradient(160deg,#2a4a8b 0%,#4a7ac4 30%,#6ba8e8 50%,#4a8b6a 65%,#2d6640 80%,#1a3820 100%);}
+.bg-rafting{background:linear-gradient(135deg,#1a3860 0%,#2a6b9a 25%,#4a9bc4 45%,#7abce0 60%,#4a7a5a 75%,#2a4a30 100%);}
+.bg-atv{background:linear-gradient(150deg,#6b4020 0%,#9a6a30 25%,#c89a50 45%,#e8c878 60%,#7a8b50 75%,#3a5020 100%);}
+.bg-cheetah{background:linear-gradient(135deg,#8b6830 0%,#c4a048 25%,#e8c870 45%,#c89840 60%,#7a6a30 80%,#3d3018 100%);}
+.bg-dining{background:linear-gradient(160deg,#2a1808 0%,#4a2810 20%,#8b4820 40%,#c47830 55%,#e8a840 65%,#0d0804 100%);}
+.bg-culture{background:linear-gradient(135deg,#8b3820 0%,#c45830 25%,#e08040 45%,#c86840 60%,#3d2010 100%);}
+.bg-horseback{background:linear-gradient(150deg,#c88040 0%,#e8a848 20%,#f0c060 35%,#8b7040 55%,#2a3818 100%);}
+.bg-balloon{background:linear-gradient(180deg,#1a2840 0%,#2a4870 15%,#4a78b0 30%,#e8a040 50%,#8b5020 70%,#1a3820 100%);}
+.bg-lodge1{background:linear-gradient(135deg,#3d2a14 0%,#6b4820 25%,#9a7040 45%,#c4a060 60%,#3a5030 100%);}
+.bg-lodge2{background:linear-gradient(150deg,#1a3020 0%,#2a5030 20%,#4a8050 40%,#7ab068 55%,#1a3818 100%);}
+.bg-lodge3{background:linear-gradient(135deg,#4a2010 0%,#8b4020 25%,#c47040 45%,#e8a060 60%,#4a3828 100%);}
+.bg-lodge4{background:linear-gradient(160deg,#2a1808 0%,#5a3818 20%,#8b6030 40%,#c49050 55%,#4a3020 100%);}
+.bg-region{background:linear-gradient(135deg,#1a3820 0%,#2a6040 20%,#4a9860 40%,#7ac880 55%,#1a3a20 100%);}
+.bg-insurance{background:linear-gradient(135deg,#1a2840 0%,#2a4870 30%,#4a78b0 60%,#6a98c8 100%);}
+.card-badge{position:absolute;top:1rem;right:1rem;padding:.28rem .75rem;font-size:.6rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;z-index:2;}
+.badge-popular{background:#c9a96e;color:#1a1510;}
+.badge-hot{background:#c0392b;color:white;}
+.card-category{position:absolute;top:1rem;left:1rem;background:var(--sand);color:var(--dusk);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;padding:.3rem .8rem;font-weight:500;z-index:2;}
+.card-price{position:absolute;bottom:1rem;right:1rem;background:rgba(26,21,16,.85);color:var(--sand-light);font-family:'Cormorant Garamond',serif;font-size:1.1rem;padding:.3rem .8rem;z-index:2;}
+.card-body{padding:1.4rem;}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:400;color:var(--earth-dark);margin-bottom:.4rem;line-height:1.2;}
+.card-desc{font-size:.84rem;color:var(--text-light);line-height:1.7;margin-bottom:.9rem;}
+.card-reviews-bar{display:flex;align-items:center;gap:.6rem;margin-bottom:.9rem;padding:.6rem .8rem;background:var(--sand-pale);border-left:2px solid var(--sand);}
+.card-reviews-stars{color:#f4a400;font-size:.78rem;}
+.card-reviews-text{font-size:.74rem;color:var(--text-light);}
+.card-reviews-text a{color:var(--earth);text-decoration:none;font-weight:500;}
+.card-reviews-text a:hover{text-decoration:underline;}
+.card-meta{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--sand-pale);padding-top:.9rem;}
+.scarcity{font-size:.72rem;color:var(--accent);font-weight:500;}
+.card-book{background:var(--earth-dark);color:var(--sand-light);border:none;padding:.55rem 1.3rem;font-family:'Jost',sans-serif;font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:background .2s;text-decoration:none;display:inline-block;}
+.card-book:hover{background:var(--earth);}
+
+/* MAP */
+#mapView{display:none;height:520px;border:1px solid var(--sand-pale);}
+#mapView.visible{display:block;}
+.leaflet-popup-content-wrapper{background:var(--ivory);border-radius:0;box-shadow:0 4px 20px rgba(61,42,20,.2);}
+.map-popup-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--earth-dark);margin-bottom:.3rem;}
+.map-popup-cat{font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;color:var(--sand);}
+
+/* STAYS */
+.stays-section{background:var(--dusk);padding:7rem 4rem;}
+.stays-section .section-title{color:var(--sand-light);}
+.stays-section .section-body{color:rgba(232,213,176,.6);}
+.stays-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:2rem;margin-top:3.5rem;}
+.stay-card{position:relative;overflow:hidden;cursor:pointer;height:420px;}
+.stay-bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .6s;}
+.stay-card:hover .stay-bg{transform:scale(1.05);}
+.stay-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(26,21,16,.92) 0%,rgba(26,21,16,.1) 55%);display:flex;flex-direction:column;justify-content:flex-end;padding:2rem;transition:background .3s;}
+.stay-card:hover .stay-overlay{background:linear-gradient(to top,rgba(26,21,16,.97) 0%,rgba(26,21,16,.3) 55%);}
+.stay-type{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--sand);margin-bottom:.4rem;}
+.stay-name{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:300;color:white;line-height:1.1;margin-bottom:.4rem;}
+.stay-rating{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem;}
+.stay-stars{color:#f4a400;font-size:.78rem;}
+.stay-review-count{font-size:.72rem;color:rgba(255,255,255,.5);}
+.stay-desc{font-size:.82rem;color:rgba(255,255,255,.6);line-height:1.65;margin-bottom:1.2rem;max-height:0;overflow:hidden;transition:max-height .4s ease;}
+.stay-card:hover .stay-desc{max-height:80px;}
+.stay-footer{display:flex;align-items:center;justify-content:space-between;}
+.stay-price{font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--sand-light);}
+.stay-price span{font-size:.7rem;font-family:'Jost',sans-serif;opacity:.7;}
+.stay-book{background:var(--sand);color:var(--dusk);border:none;padding:.5rem 1.2rem;font-family:'Jost',sans-serif;font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:background .2s;text-decoration:none;display:inline-block;}
+.stay-book:hover{background:var(--sand-light);}
+
+/* PLANNER */
+.planner-section{background:var(--dusk-mid);padding:5rem 4rem;position:relative;overflow:hidden;}
+.planner-section::before{content:'';position:absolute;top:-80px;right:-80px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(201,169,110,.08) 0%,transparent 70%);pointer-events:none;}
+.planner-inner{max-width:900px;margin:0 auto;}
+.planner-header{text-align:center;margin-bottom:3rem;}
+.planner-header .section-title{color:var(--sand-light);}
+.planner-header .section-body{color:rgba(232,213,176,.6);margin:0 auto;text-align:center;}
+.planner-form{background:rgba(255,255,255,.04);border:1px solid rgba(201,169,110,.2);padding:2.5rem;display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;}
+.planner-form .full-row{grid-column:1/-1;}
+.form-group{display:flex;flex-direction:column;gap:.5rem;}
+.form-group label{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--sand);opacity:.8;}
+.form-group input,.form-group select,.form-group textarea{background:rgba(255,255,255,.05);border:1px solid rgba(201,169,110,.2);color:var(--sand-light);padding:.75rem 1rem;font-family:'Jost',sans-serif;font-size:.88rem;font-weight:300;outline:none;transition:border-color .2s;width:100%;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--sand);}
+.form-group select option{background:var(--dusk);}
+.form-group textarea{resize:vertical;min-height:90px;}
+.planner-submit{grid-column:1/-1;background:var(--sand);color:var(--dusk);border:none;padding:1rem;font-family:'Jost',sans-serif;font-size:.8rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:background .25s;display:flex;align-items:center;justify-content:center;}
+.planner-submit:hover{background:var(--sand-light);}
+.planner-submit:disabled{opacity:.6;cursor:not-allowed;}
+.ai-response{margin-top:2rem;background:rgba(255,255,255,.04);border:1px solid rgba(201,169,110,.2);border-left:3px solid var(--sand);padding:2rem 2.5rem;color:var(--sand-light);font-size:.92rem;line-height:1.85;display:none;white-space:pre-wrap;}
+.ai-response.visible{display:block;animation:fadeUp .4s ease;}
+.ai-response-label{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--sand);margin-bottom:1rem;}
+
+/* TRAVEL INSURANCE */
+.insurance-section{padding:4rem;background:var(--dusk);}
+.insurance-card{max-width:900px;margin:0 auto;background:linear-gradient(135deg,rgba(201,169,110,.12) 0%,rgba(61,42,20,.4) 100%);border:1px solid rgba(201,169,110,.25);padding:3rem;display:grid;grid-template-columns:1fr auto;gap:3rem;align-items:center;}
+.insurance-icon{font-size:2.5rem;margin-bottom:1rem;}
+.insurance-title{font-family:'Cormorant Garamond',serif;font-size:2rem;color:var(--sand-light);margin-bottom:.6rem;}
+.insurance-body{font-size:.88rem;color:rgba(232,213,176,.6);line-height:1.75;max-width:500px;}
+.insurance-features{display:flex;gap:2rem;margin-top:1.2rem;flex-wrap:wrap;}
+.insurance-feat{font-size:.78rem;color:var(--sand);display:flex;align-items:center;gap:.4rem;}
+.insurance-btn{background:var(--sand);color:var(--dusk);border:none;padding:1rem 2rem;font-family:'Jost',sans-serif;font-size:.78rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:background .25s;white-space:nowrap;text-decoration:none;display:inline-block;}
+.insurance-btn:hover{background:var(--sand-light);}
+.insurance-note{font-size:.72rem;color:rgba(232,213,176,.35);margin-top:.8rem;text-align:center;}
+
+/* BLOG */
+.blog-section{padding:7rem 4rem;background:var(--sand-pale);}
+.blog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:2.5rem;margin-top:3.5rem;}
+.blog-card{background:white;overflow:hidden;cursor:pointer;transition:transform .3s,box-shadow .3s;}
+.blog-card:hover{transform:translateY(-4px);box-shadow:0 20px 50px rgba(61,42,20,.12);}
+.blog-img{height:200px;position:relative;overflow:hidden;}
+.blog-img-bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .6s;}
+.blog-card:hover .blog-img-bg{transform:scale(1.05);}
+.blog-tag{position:absolute;bottom:1rem;left:1rem;background:var(--earth-dark);color:var(--sand-light);font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;padding:.28rem .75rem;}
+.blog-body{padding:1.8rem;}
+.blog-meta{font-size:.7rem;color:var(--text-light);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.75rem;}
+.blog-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--earth-dark);margin-bottom:.8rem;line-height:1.25;}
+.blog-excerpt{font-size:.85rem;color:var(--text-light);line-height:1.75;margin-bottom:1.2rem;}
+.blog-read{font-size:.72rem;color:var(--earth);letter-spacing:.15em;text-transform:uppercase;text-decoration:none;border-bottom:1px solid var(--sand);padding-bottom:1px;}
+
+/* REVIEWS */
+.reviews-section{padding:7rem 4rem;background:var(--ivory);}
+.reviews-layout{display:grid;grid-template-columns:1fr 1.2fr;gap:4rem;margin-top:3.5rem;align-items:start;}
+.reviews-display h3{font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--earth-dark);margin-bottom:1.5rem;}
+.reviews-list{display:flex;flex-direction:column;gap:1.2rem;max-height:600px;overflow-y:auto;}
+.review-card{background:white;padding:1.8rem;position:relative;border-bottom:2px solid transparent;transition:border-color .2s;}
+.review-card:hover{border-bottom-color:var(--sand);}
+.review-card::before{content:'"';font-family:'Cormorant Garamond',serif;font-size:4rem;color:var(--sand);opacity:.3;position:absolute;top:.5rem;left:1.2rem;line-height:1;}
+.review-stars{color:#f4a400;font-size:.8rem;margin-bottom:.6rem;}
+.review-text{font-size:.88rem;line-height:1.8;color:var(--text-light);font-style:italic;margin-bottom:1rem;}
+.review-author{display:flex;align-items:center;gap:.7rem;}
+.review-avatar{width:34px;height:34px;border-radius:50%;background:var(--earth);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:.95rem;color:var(--sand-light);font-weight:600;flex-shrink:0;}
+.review-name{font-size:.85rem;font-weight:500;color:var(--earth-dark);}
+.review-date{font-size:.72rem;color:var(--text-light);}
+.no-reviews{font-size:.9rem;color:var(--text-light);font-style:italic;padding:1rem 0;}
+.review-form-box{background:var(--dusk);padding:2.5rem;}
+.review-form-box h3{font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--sand-light);margin-bottom:.6rem;}
+.review-form-box p{font-size:.85rem;color:rgba(232,213,176,.55);margin-bottom:1.8rem;line-height:1.7;}
+.star-picker{display:flex;gap:.3rem;margin-bottom:1.5rem;flex-direction:row-reverse;justify-content:flex-end;}
+.star-picker input{display:none;}
+.star-picker label{font-size:1.6rem;color:rgba(255,255,255,.2);cursor:pointer;transition:color .15s;}
+.star-picker input:checked ~ label,.star-picker label:hover,.star-picker label:hover ~ label{color:#f4a400;}
+.review-input{background:rgba(255,255,255,.06);border:1px solid rgba(201,169,110,.2);color:var(--sand-light);padding:.75rem 1rem;font-family:'Jost',sans-serif;font-size:.88rem;font-weight:300;outline:none;transition:border-color .2s;width:100%;margin-bottom:1rem;}
+.review-input:focus{border-color:var(--sand);}
+.review-textarea{background:rgba(255,255,255,.06);border:1px solid rgba(201,169,110,.2);color:var(--sand-light);padding:.75rem 1rem;font-family:'Jost',sans-serif;font-size:.88rem;font-weight:300;outline:none;resize:vertical;min-height:110px;width:100%;transition:border-color .2s;margin-bottom:1rem;}
+.review-textarea:focus{border-color:var(--sand);}
+.r-label{font-size:.67rem;letter-spacing:.18em;text-transform:uppercase;color:var(--sand);opacity:.8;display:block;margin-bottom:.4rem;}
+.review-submit{background:var(--sand);color:var(--dusk);border:none;padding:.9rem 2rem;font-family:'Jost',sans-serif;font-size:.78rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:background .25s;width:100%;}
+.review-submit:hover{background:var(--sand-light);}
+.review-thanks{display:none;text-align:center;padding:2rem 0;}
+.review-thanks.show{display:block;}
+.review-thanks p{color:var(--sand-light);font-size:.9rem;line-height:1.7;}
+
+/* NEWSLETTER */
+.newsletter-section{background:var(--earth-dark);padding:5rem 4rem;text-align:center;}
+.newsletter-inner{max-width:600px;margin:0 auto;}
+.newsletter-inner .section-title{color:var(--sand-light);}
+.newsletter-inner .section-body{color:rgba(232,213,176,.6);text-align:center;margin:0 auto 2.5rem;}
+.newsletter-form{display:flex;max-width:480px;margin:0 auto;}
+.newsletter-input{flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(201,169,110,.25);border-right:none;color:var(--sand-light);padding:.9rem 1.2rem;font-family:'Jost',sans-serif;font-size:.88rem;outline:none;}
+.newsletter-input::placeholder{color:rgba(232,213,176,.35);}
+.newsletter-btn{background:var(--sand);color:var(--dusk);border:none;padding:.9rem 1.8rem;font-family:'Jost',sans-serif;font-size:.75rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:background .25s;white-space:nowrap;}
+.newsletter-btn:hover{background:var(--sand-light);}
+.newsletter-note{font-size:.72rem;color:rgba(232,213,176,.35);margin-top:1rem;}
+.newsletter-success{display:none;color:var(--sand);font-size:.9rem;margin-top:1rem;}
+.newsletter-success.show{display:block;}
+
+/* FAQ */
+.faq-section{padding:7rem 4rem;background:var(--sand-pale);}
+.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:3.5rem;}
+.faq-item{background:white;border-bottom:2px solid transparent;transition:border-color .2s;overflow:hidden;}
+.faq-item.open{border-bottom-color:var(--sand);}
+.faq-q{padding:1.5rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:var(--earth-dark);gap:1rem;}
+.faq-q:hover{color:var(--earth);}
+.faq-icon{color:var(--sand);font-size:1.2rem;transition:transform .3s;flex-shrink:0;}
+.faq-item.open .faq-icon{transform:rotate(45deg);}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s;}
+.faq-a-inner{padding:0 1.5rem 1.5rem;font-size:.88rem;color:var(--text-light);line-height:1.8;}
+.faq-item.open .faq-a{max-height:300px;}
+
+/* OPERATOR APPLICATION */
+.operator-section{background:var(--dusk-mid);padding:7rem 4rem;}
+.operator-inner{max-width:860px;margin:0 auto;}
+.operator-header{text-align:center;margin-bottom:3.5rem;}
+.operator-header .section-title{color:var(--sand-light);}
+.operator-header .section-body{color:rgba(232,213,176,.6);margin:0 auto;text-align:center;}
+.operator-perks{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-bottom:3rem;}
+.perk{text-align:center;padding:1.5rem 1rem;border:1px solid rgba(201,169,110,.15);}
+.perk-icon{font-size:1.5rem;margin-bottom:.7rem;}
+.perk-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--sand-light);margin-bottom:.4rem;}
+.perk-body{font-size:.78rem;color:rgba(232,213,176,.5);line-height:1.65;}
+.operator-form{background:rgba(255,255,255,.04);border:1px solid rgba(201,169,110,.2);padding:2.5rem;display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;}
+.operator-form .full-row{grid-column:1/-1;}
+.op-input,.op-select,.op-textarea{background:rgba(255,255,255,.05);border:1px solid rgba(201,169,110,.2);color:var(--sand-light);padding:.75rem 1rem;font-family:'Jost',sans-serif;font-size:.88rem;font-weight:300;outline:none;transition:border-color .2s;width:100%;}
+.op-input:focus,.op-select:focus,.op-textarea:focus{border-color:var(--sand);}
+.op-select option{background:var(--dusk);}
+.op-textarea{resize:vertical;min-height:100px;}
+.op-label{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--sand);opacity:.8;display:block;margin-bottom:.4rem;}
+.operator-submit{grid-column:1/-1;background:var(--sand);color:var(--dusk);border:none;padding:1rem;font-family:'Jost',sans-serif;font-size:.8rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:background .25s;}
+.operator-submit:hover{background:var(--sand-light);}
+.operator-thanks{display:none;text-align:center;padding:3rem 0;}
+.operator-thanks.show{display:block;}
+.operator-thanks h3{font-family:'Cormorant Garamond',serif;font-size:2rem;color:var(--sand-light);margin-bottom:.8rem;}
+.operator-thanks p{font-size:.9rem;color:rgba(232,213,176,.6);line-height:1.7;}
+
+/* REGION */
+.region-section{display:grid;grid-template-columns:1fr 1fr;min-height:600px;}
+.region-img{position:relative;overflow:hidden;min-height:400px;}
+.region-img-bg{position:absolute;inset:0;background-size:cover;background-position:center;}
+.region-content{background:var(--dusk-mid);padding:6rem 5rem;display:flex;flex-direction:column;justify-content:center;}
+.region-content .section-title{color:var(--sand-light);font-size:2.6rem;}
+.region-content .section-body{color:rgba(232,213,176,.65);margin-bottom:2rem;}
+.region-facts{display:flex;flex-direction:column;gap:1.2rem;margin-top:2rem;}
+.fact{display:flex;gap:1rem;align-items:flex-start;padding-bottom:1.2rem;border-bottom:1px solid rgba(201,169,110,.12);}
+.fact:last-child{border-bottom:none;}
+.fact-icon{color:var(--sand);font-size:1.1rem;margin-top:.1rem;}
+.fact-text{font-size:.88rem;color:rgba(232,213,176,.65);line-height:1.65;}
+.fact-text strong{color:var(--sand-light);display:block;font-weight:400;margin-bottom:.2rem;}
+
+/* FOOTER */
+footer{background:var(--dusk);padding:5rem 4rem 3rem;}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;margin-bottom:4rem;}
+.footer-brand .nav-logo{display:block;margin-bottom:1.2rem;font-size:1.7rem;}
+.footer-tagline{font-size:.85rem;color:rgba(232,213,176,.45);line-height:1.7;max-width:260px;}
+.footer-col h4{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--sand);margin-bottom:1.2rem;opacity:.8;}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:.6rem;}
+.footer-col a{font-size:.85rem;color:rgba(232,213,176,.45);text-decoration:none;transition:color .2s;}
+.footer-col a:hover{color:var(--sand-light);}
+.footer-bottom{border-top:1px solid rgba(201,169,110,.1);padding-top:2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+.footer-copy{font-size:.75rem;color:rgba(232,213,176,.3);}
+.footer-legal{display:flex;gap:1.5rem;}
+.footer-legal a{font-size:.75rem;color:rgba(232,213,176,.3);text-decoration:none;}
+
+/* AFFILIATE REDIRECT MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(26,21,16,.85);z-index:300;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--ivory);max-width:480px;width:90%;padding:3rem;position:relative;animation:fadeUp .3s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.modal-close{position:absolute;top:1.2rem;right:1.5rem;background:none;border:none;font-size:1.4rem;color:var(--text-light);cursor:pointer;}
+.modal-eyebrow{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--sand);margin-bottom:.5rem;}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--earth-dark);margin-bottom:.8rem;}
+.modal-body{font-size:.88rem;color:var(--text-light);line-height:1.7;margin-bottom:1.8rem;}
+.modal-platform{display:flex;align-items:center;gap:.8rem;background:var(--sand-pale);padding:1rem;margin-bottom:1.8rem;border-left:3px solid var(--sand);}
+.modal-platform-icon{font-size:1.3rem;}
+.modal-platform-text{font-size:.82rem;color:var(--text-light);line-height:1.5;}
+.modal-platform-text strong{color:var(--earth-dark);display:block;}
+.modal-go{background:var(--earth-dark);color:var(--sand-light);border:none;padding:1rem;font-family:'Jost',sans-serif;font-size:.8rem;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:background .2s;width:100%;text-decoration:none;display:block;text-align:center;margin-bottom:.8rem;}
+.modal-go:hover{background:var(--earth);}
+.modal-note{font-size:.73rem;color:var(--text-light);text-align:center;}
+
+/* ARTICLE MODAL */
+.article-modal-overlay{position:fixed;inset:0;background:rgba(26,21,16,.9);z-index:200;display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:3rem 1rem;}
+.article-modal-overlay.open{display:flex;}
+.article-modal{background:var(--ivory);max-width:760px;width:100%;padding:4rem;position:relative;animation:fadeUp .3s ease;}
+.article-close{position:absolute;top:1.5rem;right:1.5rem;background:none;border:none;font-size:1.4rem;color:var(--text-light);cursor:pointer;}
+.article-tag{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--sand);margin-bottom:.8rem;}
+.article-title{font-family:'Cormorant Garamond',serif;font-size:2.2rem;color:var(--earth-dark);margin-bottom:1rem;line-height:1.15;}
+.article-meta{font-size:.75rem;color:var(--text-light);margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--sand-pale);}
+.article-body{font-size:.95rem;line-height:1.9;color:var(--text-light);}
+.article-body h3{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--earth-dark);margin:2rem 0 .8rem;}
+.article-body p{margin-bottom:1.2rem;}
+.article-body ul{padding-left:1.5rem;margin-bottom:1.2rem;}
+.article-body li{margin-bottom:.5rem;}
+
+/* AI CHAT WIDGET */
+.chat-bubble{position:fixed;bottom:2rem;right:2rem;z-index:400;display:flex;flex-direction:column;align-items:flex-end;gap:.8rem;}
+.chat-toggle{width:58px;height:58px;border-radius:50%;background:var(--sand);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.4rem;box-shadow:0 4px 20px rgba(61,42,20,.35);transition:transform .2s,background .2s;}
+.chat-toggle:hover{transform:scale(1.08);background:var(--sand-light);}
+.chat-panel{width:360px;background:var(--ivory);border:1px solid var(--sand-pale);box-shadow:0 10px 50px rgba(61,42,20,.25);display:none;flex-direction:column;max-height:520px;animation:fadeUp .3s ease;}
+.chat-panel.open{display:flex;}
+.chat-header{background:var(--earth-dark);padding:1.2rem 1.5rem;display:flex;align-items:center;justify-content:space-between;}
+.chat-header-info{display:flex;align-items:center;gap:.8rem;}
+.chat-avatar{width:36px;height:36px;background:var(--sand);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;}
+.chat-header-name{font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:var(--sand-light);}
+.chat-header-status{font-size:.68rem;color:rgba(232,213,176,.5);display:flex;align-items:center;gap:.3rem;}
+.chat-header-status::before{content:'';width:6px;height:6px;background:#4caf50;border-radius:50%;}
+.chat-close-btn{background:none;border:none;color:rgba(232,213,176,.5);cursor:pointer;font-size:1.1rem;}
+.chat-messages{flex:1;overflow-y:auto;padding:1.2rem;display:flex;flex-direction:column;gap:.8rem;}
+.chat-msg{max-width:85%;padding:.75rem 1rem;font-size:.84rem;line-height:1.65;}
+.chat-msg.bot{background:white;color:var(--text);align-self:flex-start;border-left:2px solid var(--sand);}
+.chat-msg.user{background:var(--earth-dark);color:var(--sand-light);align-self:flex-end;}
+.chat-msg.typing{color:var(--text-light);font-style:italic;}
+.chat-suggestions{padding:.8rem 1.2rem;display:flex;gap:.5rem;flex-wrap:wrap;border-top:1px solid var(--sand-pale);}
+.chat-suggestion{background:transparent;border:1px solid rgba(107,76,42,.25);color:var(--text-light);padding:.3rem .75rem;font-family:'Jost',sans-serif;font-size:.72rem;cursor:pointer;transition:all .2s;}
+.chat-suggestion:hover{background:var(--earth);border-color:var(--earth);color:var(--sand-light);}
+.chat-input-row{display:flex;border-top:1px solid var(--sand-pale);}
+.chat-input{flex:1;border:none;padding:.9rem 1rem;font-family:'Jost',sans-serif;font-size:.86rem;color:var(--text);outline:none;background:white;}
+.chat-send{background:var(--sand);border:none;padding:.9rem 1.2rem;cursor:pointer;color:var(--dusk);font-size:.9rem;transition:background .2s;}
+.chat-send:hover{background:var(--sand-light);}
+
+.loading-dots::after{content:'...';animation:dots 1.2s steps(4,end) infinite;}
+@keyframes dots{0%,20%{content:'.';}40%{content:'..';}60%,100%{content:'...';}}
+
+@media(max-width:900px){
+  nav{padding:1.2rem 2rem;} nav.scrolled{padding:.8rem 2rem;} .nav-links{display:none;}
+  .trust-grid{grid-template-columns:1fr 1fr;}
+  .activities-section,.stays-section,.reviews-section,.planner-section,.blog-section,.newsletter-section,.faq-section,.operator-section{padding:5rem 2rem;}
+  .trust-section,.insurance-section{padding:4rem 2rem;}
+  .stats-strip{padding:2.5rem 2rem;gap:2rem;} .strip-divider{display:none;}
+  .search-bar-wrap{padding:1.2rem 2rem;}
+  .faq-grid{grid-template-columns:1fr;}
+  .operator-form,.planner-form{grid-template-columns:1fr;} .operator-form .full-row,.planner-form .full-row{grid-column:1;}
+  .operator-perks{grid-template-columns:1fr;}
+  .region-section{grid-template-columns:1fr;} .region-img{height:300px;} .region-content{padding:4rem 2rem;}
+  .reviews-layout{grid-template-columns:1fr;}
+  .footer-top{grid-template-columns:1fr 1fr;}
+  .insurance-card{grid-template-columns:1fr;}
+  .chat-panel{width:300px;}
+  .newsletter-form{flex-direction:column;} .newsletter-input{border-right:1px solid rgba(201,169,110,.25);border-bottom:none;}
+}
+
+/* FEATURED SPOTLIGHT */
+.featured-section{padding:0 4rem 4rem;background:var(--ivory);}
+.featured-card{position:relative;height:480px;overflow:hidden;cursor:pointer;display:grid;grid-template-columns:1fr 420px;}
+.featured-img{position:relative;overflow:hidden;}
+.featured-img-bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .8s ease;}
+.featured-card:hover .featured-img-bg{transform:scale(1.04);}
+.featured-img-overlay{position:absolute;inset:0;background:linear-gradient(to right,transparent 60%,rgba(26,21,16,.95) 100%);}
+.featured-content{background:var(--dusk);padding:3rem;display:flex;flex-direction:column;justify-content:center;position:relative;}
+.featured-content::before{content:'';position:absolute;left:-1px;top:0;bottom:0;width:1px;background:var(--sand);opacity:.3;}
+.featured-tag{font-size:.62rem;letter-spacing:.25em;text-transform:uppercase;color:var(--sand);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;}
+.featured-tag::before{content:'✦';font-size:.55rem;}
+.featured-title{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:white;line-height:1.15;margin-bottom:1rem;}
+.featured-desc{font-size:.85rem;color:rgba(232,213,176,.6);line-height:1.75;margin-bottom:1.5rem;}
+.featured-inclusions{display:flex;flex-direction:column;gap:.4rem;margin-bottom:1.8rem;}
+.featured-inclusion{font-size:.78rem;color:var(--sand-light);display:flex;align-items:center;gap:.5rem;opacity:.8;}
+.featured-inclusion::before{content:'✓';color:var(--sand);font-size:.7rem;}
+.featured-footer{display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(201,169,110,.15);padding-top:1.5rem;}
+.featured-price{font-family:'Cormorant Garamond',serif;color:var(--sand-light);}
+.featured-price-amount{font-size:1.8rem;display:block;line-height:1;}
+.featured-price-note{font-size:.7rem;font-family:'Jost',sans-serif;color:rgba(232,213,176,.5);}
+.featured-rating{font-size:.8rem;color:var(--sand);text-align:right;}
+.featured-rating-num{font-size:1.2rem;font-family:'Cormorant Garamond',serif;display:block;}
+.featured-book{background:var(--sand);color:var(--dusk);border:none;padding:.75rem 1.8rem;font-family:'Jost',sans-serif;font-size:.75rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;transition:background .2s;margin-top:1rem;width:100%;}
+.featured-book:hover{background:var(--sand-light);}
+
+/* DETAIL MODAL */
+.detail-overlay{position:fixed;inset:0;background:rgba(26,21,16,.9);z-index:250;display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:2rem 1rem;backdrop-filter:blur(4px);}
+.detail-overlay.open{display:flex;}
+.detail-modal{background:var(--ivory);max-width:800px;width:100%;position:relative;animation:fadeUp .3s ease;margin:auto;}
+.detail-close{position:absolute;top:1rem;right:1.2rem;background:rgba(26,21,16,.6);border:none;width:34px;height:34px;border-radius:50%;font-size:1rem;color:white;cursor:pointer;z-index:5;display:flex;align-items:center;justify-content:center;}
+.detail-hero{height:320px;position:relative;overflow:hidden;}
+.detail-hero-bg{position:absolute;inset:0;background-size:cover;background-position:center;}
+.detail-hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(26,21,16,.8) 0%,transparent 55%);}
+.detail-hero-meta{position:absolute;bottom:1.5rem;left:1.8rem;right:1.8rem;display:flex;justify-content:space-between;align-items:flex-end;}
+.detail-category{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--sand);background:rgba(26,21,16,.6);padding:.3rem .8rem;display:inline-block;margin-bottom:.5rem;}
+.detail-hero-title{font-family:'Cormorant Garamond',serif;font-size:2rem;color:white;line-height:1.1;}
+.detail-hero-price{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--sand-light);text-align:right;white-space:nowrap;}
+.detail-hero-price small{font-size:.7rem;font-family:'Jost',sans-serif;display:block;color:rgba(232,213,176,.6);}
+.detail-body{padding:2rem 2.5rem;}
+.detail-rating-bar{display:flex;align-items:center;gap:1rem;padding:.8rem 1rem;background:var(--sand-pale);border-left:3px solid var(--sand);margin-bottom:1.8rem;}
+.detail-stars{color:#f4a400;font-size:.9rem;letter-spacing:.05em;}
+.detail-rating-text{font-size:.82rem;color:var(--text-light);}
+.detail-rating-text strong{color:var(--earth-dark);}
+.detail-desc{font-size:.92rem;color:var(--text-light);line-height:1.85;margin-bottom:2rem;}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem;}
+.detail-box{background:white;padding:1.4rem;}
+.detail-box-title{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--sand);margin-bottom:.9rem;display:flex;align-items:center;gap:.5rem;}
+.detail-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;}
+.detail-list li{font-size:.84rem;color:var(--text-light);display:flex;align-items:flex-start;gap:.6rem;line-height:1.5;}
+.detail-list li::before{content:'✓';color:var(--sage,#7a8c6e);font-size:.75rem;margin-top:.15rem;flex-shrink:0;}
+.detail-list.brings li::before{content:'→';color:var(--sand);}
+.detail-list.info li::before{content:'ℹ';color:var(--text-light);}
+.detail-cta{border-top:1px solid var(--sand-pale);padding-top:1.8rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+.detail-cta-left{}
+.detail-cta-price{font-family:'Cormorant Garamond',serif;font-size:2rem;color:var(--earth-dark);line-height:1;}
+.detail-cta-note{font-size:.75rem;color:var(--text-light);margin-top:.2rem;}
+.detail-book-btn{background:var(--earth-dark);color:var(--sand-light);border:none;padding:1rem 2.5rem;font-family:'Jost',sans-serif;font-size:.8rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:background .2s;flex:1;max-width:280px;}
+.detail-book-btn:hover{background:var(--earth);}
+.detail-cancellation{font-size:.75rem;color:var(--text-light);text-align:center;margin-top:.8rem;width:100%;}
+
+@media(max-width:900px){
+  .featured-section{padding:0 2rem 3rem;}
+  .featured-card{grid-template-columns:1fr;height:auto;}
+  .featured-img{height:260px;}
+  .featured-img-overlay{background:linear-gradient(to bottom,transparent 40%,rgba(26,21,16,.95) 100%);}
+  .featured-content{padding:2rem;}
+  .detail-grid{grid-template-columns:1fr;}
+  .detail-body{padding:1.5rem;}
+}
+
+
+.bg-nightdrive{background:linear-gradient(180deg,#050810 0%,#0a1428 20%,#1a2845 40%,#0d1a30 60%,#050c18 100%);}
+.bg-walkingsafari{background:linear-gradient(135deg,#2d4a20 0%,#4a7a30 25%,#6aaa48 45%,#8aca60 60%,#4a7a30 80%,#2a4820 100%);}
+.bg-scenicflight{background:linear-gradient(180deg,#1a3060 0%,#2a50a0 20%,#4a80d0 40%,#c8e0f8 60%,#e8f4ff 75%,#7ab0d8 100%);}
+.bg-boat{background:linear-gradient(180deg,#1a4060 0%,#2a70a0 25%,#4aa8d0 45%,#6ac8e8 60%,#4a9ac0 75%,#1a4060 100%);}
+.bg-fishing{background:linear-gradient(135deg,#1a3820 0%,#2a6040 20%,#4a9860 40%,#3a7850 60%,#2a5030 80%,#1a3020 100%);}
+.bg-photosafari{background:linear-gradient(135deg,#3d2a14 0%,#6b4820 20%,#c4924a 40%,#e8c878 55%,#c4924a 70%,#3d2a14 100%);}
+
+
+/* DINING SECTION */
+.dining-section{padding:7rem 4rem;background:var(--earth-dark);}
+.dining-section .section-label{color:var(--sand);}
+.dining-section .section-title{color:var(--sand-light);}
+.dining-section .section-body{color:rgba(232,213,176,.6);}
+.dining-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:2rem;margin-top:3.5rem;}
+.dining-card{background:rgba(255,255,255,.05);border:1px solid rgba(201,169,110,.15);overflow:hidden;cursor:pointer;transition:transform .3s,border-color .3s;}
+.dining-card:hover{transform:translateY(-4px);border-color:rgba(201,169,110,.4);}
+.dining-card-img{height:200px;position:relative;overflow:hidden;}
+.dining-card-img-bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .6s;}
+.dining-card:hover .dining-card-img-bg{transform:scale(1.06);}
+.dining-card-icon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:3rem;opacity:.2;}
+.dining-card-tag{position:absolute;top:1rem;left:1rem;background:var(--sand);color:var(--dusk);font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;padding:.28rem .75rem;font-weight:500;}
+.dining-card-body{padding:1.4rem;}
+.dining-card-title{font-family:'Cormorant Garamond',serif;font-size:1.35rem;color:var(--sand-light);margin-bottom:.4rem;}
+.dining-card-desc{font-size:.83rem;color:rgba(232,213,176,.55);line-height:1.7;margin-bottom:1rem;}
+.dining-card-meta{display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(201,169,110,.15);padding-top:.9rem;}
+.dining-card-stars{color:#f4a400;font-size:.78rem;}
+.dining-card-price{font-size:.8rem;color:var(--sand);font-family:'Cormorant Garamond',serif;}
+.dining-card-btn{background:var(--sand);color:var(--dusk);border:none;padding:.48rem 1.1rem;font-family:'Jost',sans-serif;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;cursor:pointer;transition:background .2s;}
+.dining-card-btn:hover{background:var(--sand-light);}
+/* New lodge gradients */
+.bg-lodge5{background:linear-gradient(150deg,#2a1808 0%,#5a3010 20%,#9a6030 40%,#c89050 55%,#7a5030 75%,#2a1808 100%);}
+.bg-lodge6{background:linear-gradient(135deg,#1a1a2e 0%,#2a2a50 25%,#4a4a80 45%,#6a6ab0 60%,#3a3a60 80%,#1a1a30 100%);}
+.bg-lodge7{background:linear-gradient(150deg,#2d4a20 0%,#4a7a30 25%,#6aaa48 45%,#4a8030 65%,#2d4a20 100%);}
+.bg-lodge8{background:linear-gradient(135deg,#3d2a14 0%,#6b4820 20%,#a07840 40%,#c8a060 55%,#8a6040 75%,#3d2a14 100%);}
+.bg-lodge9{background:linear-gradient(160deg,#1a3020 0%,#2a5030 20%,#4a8050 40%,#6aa060 55%,#3a6040 75%,#1a3020 100%);}
+.bg-lodge10{background:linear-gradient(135deg,#4a2810 0%,#7a4820 20%,#b07840 40%,#d8a060 55%,#906040 75%,#3a2010 100%);}
+.bg-lodge11{background:linear-gradient(150deg,#2a1a08 0%,#5a3818 20%,#9a6830 40%,#c89048 55%,#8a5830 75%,#2a1808 100%);}
+.bg-lodge12{background:linear-gradient(135deg,#1a2838 0%,#2a4868 25%,#4a7098 45%,#6a90b8 60%,#3a5878 80%,#1a2838 100%);}
+.bg-dining1{background:linear-gradient(135deg,#1a3060 0%,#2a5090 25%,#4a80c0 45%,#6aa0d8 60%,#3a6098 80%,#1a3060 100%);}
+.bg-dining2{background:linear-gradient(135deg,#3d1a0a 0%,#7a3818 20%,#b06028 40%,#d88040 55%,#906030 75%,#3d1a0a 100%);}
+.bg-dining3{background:linear-gradient(160deg,#1a0808 0%,#3a1010 20%,#6a1818 40%,#9a2828 55%,#6a1818 75%,#1a0808 100%);}
+.bg-dining4{background:linear-gradient(135deg,#0a1a0a 0%,#1a3a1a 25%,#2a6a2a 45%,#3a8a3a 60%,#2a5a2a 80%,#0a1a0a 100%);}
+.bg-dining5{background:linear-gradient(150deg,#3d2a14 0%,#7a5028 20%,#c49050 40%,#e8c078 55%,#a07040 75%,#3d2a14 100%);}
+@media(max-width:900px){.dining-section{padding:5rem 2rem;}}
+
+
+/* ─── PHOTO CAROUSEL ─────────────────────────────── */
+.carousel-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(26,21,16,.65);border:none;color:white;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;z-index:4;transition:all .2s;opacity:0;line-height:1;}
+.activity-card:hover .carousel-btn,
+.stay-card:hover .carousel-btn,
+.dining-card:hover .carousel-btn{opacity:1;}
+.carousel-btn:hover{background:rgba(201,169,110,.85);transform:translateY(-50%) scale(1.1);}
+.carousel-prev{left:.5rem;}
+.carousel-next{right:.5rem;}
+.carousel-dots{position:absolute;bottom:.6rem;left:50%;transform:translateX(-50%);display:flex;gap:.35rem;z-index:4;}
+.dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.35);cursor:pointer;transition:background .2s,transform .2s;}
+.dot.active{background:var(--sand);transform:scale(1.3);}
+
+/* ─── DINING DETAIL MODAL ────────────────────────── */
+.dining-modal-overlay{position:fixed;inset:0;background:rgba(26,21,16,.9);z-index:250;display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:2rem 1rem;backdrop-filter:blur(4px);}
+.dining-modal-overlay.open{display:flex;}
+.dining-modal{background:var(--ivory);max-width:700px;width:100%;position:relative;animation:fadeUp .3s ease;margin:auto;}
+.dining-modal-close{position:absolute;top:1rem;right:1.2rem;background:rgba(26,21,16,.6);border:none;width:34px;height:34px;border-radius:50%;font-size:1rem;color:white;cursor:pointer;z-index:5;display:flex;align-items:center;justify-content:center;}
+.dining-modal-hero{height:280px;position:relative;overflow:hidden;}
+.dining-modal-hero-bg{position:absolute;inset:0;background-size:cover;background-position:center;}
+.dining-modal-hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(26,21,16,.85) 0%,transparent 55%);}
+.dining-modal-hero-meta{position:absolute;bottom:1.5rem;left:1.8rem;right:1.8rem;display:flex;justify-content:space-between;align-items:flex-end;}
+.dining-modal-type{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--sand);margin-bottom:.4rem;}
+.dining-modal-name{font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:white;line-height:1.1;}
+.dining-modal-price-tag{font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--sand-light);white-space:nowrap;}
+.dining-modal-body{padding:2rem 2.5rem;}
+.dining-modal-rating{display:flex;align-items:center;gap:.8rem;padding:.7rem 1rem;background:var(--sand-pale);border-left:3px solid var(--sand);margin-bottom:1.5rem;}
+.dining-modal-stars{color:#f4a400;font-size:.9rem;}
+.dining-modal-rating-text{font-size:.82rem;color:var(--text-light);}
+.dining-modal-desc{font-size:.93rem;color:var(--text-light);line-height:1.85;margin-bottom:1.8rem;}
+.dining-modal-info{display:flex;flex-direction:column;gap:.5rem;margin-bottom:2rem;}
+.dining-modal-info-item{font-size:.85rem;color:var(--text-light);display:flex;align-items:flex-start;gap:.7rem;padding-bottom:.5rem;border-bottom:1px solid var(--sand-pale);}
+.dining-modal-info-item:last-child{border-bottom:none;}
+.dining-modal-info-item::before{content:"✓";color:var(--sand);font-size:.8rem;margin-top:.1rem;flex-shrink:0;}
+.dining-modal-cta{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--sand-pale);padding-top:1.5rem;flex-wrap:wrap;gap:1rem;}
+.dining-modal-cta-left .dining-modal-name-small{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--earth-dark);}
+.dining-modal-cta-left .dining-modal-note{font-size:.75rem;color:var(--text-light);margin-top:.2rem;}
+.dining-modal-visit-btn{background:var(--earth-dark);color:var(--sand-light);border:none;padding:.9rem 2rem;font-family:'Jost',sans-serif;font-size:.78rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:background .2s;}
+.dining-modal-visit-btn:hover{background:var(--earth);}
+@media(max-width:900px){.dining-modal-body{padding:1.5rem;}}
+
+
+/* ═══ PAGE ROUTING ═══════════════════════════════ */
+.page { display:none; }
+.page.active { display:block; }
+
+/* ═══ PAGE HEADERS ══════════════════════════════ */
+.page-header{background:var(--dusk);padding:8rem 4rem 4rem;position:relative;overflow:hidden;}
+.page-header::before{content:'';position:absolute;inset:0;background-size:cover;background-position:center;opacity:.2;}
+.page-header-content{position:relative;z-index:2;}
+.page-header-eyebrow{font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;color:var(--sand);margin-bottom:1rem;}
+.page-header-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2.5rem,6vw,5rem);font-weight:300;color:white;line-height:1;}
+.page-header-title em{font-style:italic;color:var(--sand-light);}
+.page-header-sub{font-size:.95rem;color:rgba(232,213,176,.6);margin-top:1rem;max-width:500px;line-height:1.8;}
+
+/* ═══ HOME PREVIEW SECTIONS ═════════════════════ */
+.preview-section{padding:5rem 4rem;}
+.preview-section.dark{background:var(--dusk);}
+.preview-section.light{background:var(--ivory);}
+.preview-section.muted{background:var(--sand-pale);}
+.preview-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2.5rem;flex-wrap:wrap;gap:1rem;}
+.preview-header .section-title{margin-bottom:0;}
+.see-all-btn{background:transparent;border:1px solid var(--sand);color:var(--sand);padding:.55rem 1.4rem;font-family:'Jost',sans-serif;font-size:.73rem;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;transition:background .25s,color .25s;white-space:nowrap;}
+.see-all-btn:hover{background:var(--sand);color:var(--dusk);}
+.see-all-btn.dark-btn{border-color:var(--earth);color:var(--earth);}
+.see-all-btn.dark-btn:hover{background:var(--earth);color:white;}
+.preview-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.8rem;}
+.preview-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:1.8rem;}
+
+/* ═══ STAYS PAGE ════════════════════════════════ */
+.stays-filter{display:flex;gap:.6rem;flex-wrap:wrap;padding:2rem 4rem 0;background:var(--dusk);}
+.price-badge{display:inline-block;padding:.2rem .7rem;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.4rem;}
+.price-budget{background:rgba(122,140,110,.25);color:#9ab08a;}
+.price-mid{background:rgba(201,169,110,.15);color:var(--sand);}
+.price-luxury{background:rgba(201,169,110,.25);color:var(--sand-light);}
+.price-ultra{background:rgba(201,169,110,.35);color:#e8d5b0;}
+
+/* ═══ INFO PAGE ══════════════════════════════════ */
+.info-page-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;padding:5rem 4rem;background:var(--ivory);}
+@media(max-width:900px){
+  .page-header{padding:7rem 2rem 3rem;}
+  .preview-section{padding:4rem 2rem;}
+  .preview-grid-3,.preview-grid-4{grid-template-columns:1fr 1fr;}
+  .stays-filter{padding:2rem 2rem 0;}
+  .info-page-grid{grid-template-columns:1fr;padding:4rem 2rem;}
+}
+@media(max-width:600px){
+  .preview-grid-3,.preview-grid-4{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ NAV ═══════════════════════════════════ -->
+<nav id="mainNav">
+  <a href="#" class="nav-logo" onclick="navigate('home')">Hoedspruit <span>&amp; Beyond</span></a>
+  <ul class="nav-links">
+    <li><a href="#" onclick="navigate('home')" data-page="home">Home</a></li>
+    <li><a href="#" onclick="navigate('activities')" data-page="activities">Activities</a></li>
+    <li><a href="#" onclick="navigate('stays')" data-page="stays">Stays</a></li>
+    <li><a href="#" onclick="navigate('dining')" data-page="dining">Dining</a></li>
+    <li><a href="#" onclick="navigate('blog')" data-page="blog">Blog</a></li>
+    <li><a href="#" onclick="navigate('info')" data-page="info">Plan &amp; FAQ</a></li>
+  </ul>
+  <button class="nav-cta" onclick="navigate('activities')">Explore</button>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════
+     PAGE: HOME
+═══════════════════════════════════════════════════ -->
+<div class="page active" id="page-home">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg-fallback"></div>
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Greater Kruger · Limpopo · South Africa</p>
+      <h1 class="hero-title">The Wild<br><em>Awaits You</em></h1>
+      <p class="hero-subtitle">The only booking platform dedicated entirely to Hoedspruit — hand-curated game drives, adventures, lodges and dining. No hidden fees. Just the wild.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="navigate('activities')">Explore Experiences</button>
+        <button class="btn-secondary" onclick="navigate('info')">Plan My Trip</button>
+      </div>
+    </div>
+    <div class="hero-scroll">Discover</div>
+  </section>
+
+  <!-- WHY BOOK WITH US -->
+  <section class="trust-section">
+    <div style="text-align:center">
+      <p class="section-label" style="color:var(--sand)">Why Book Through Us</p>
+      <h2 class="section-title" style="color:var(--sand-light);text-align:center">Your Safari, <em>Done Right</em></h2>
+    </div>
+    <div class="trust-grid">
+      <div class="trust-card"><div class="trust-icon">🎯</div><div class="trust-title">Curated, Not Listed</div><div class="trust-body">We personally vet every operator. If it is on this site, we would recommend it to our own family.</div></div>
+      <div class="trust-card"><div class="trust-icon">💰</div><div class="trust-title">No Extra Cost to You</div><div class="trust-body">You pay the same price as booking direct. Our commission comes from the operator — never from you.</div></div>
+      <div class="trust-card"><div class="trust-icon">🤝</div><div class="trust-title">Trusted Platforms Only</div><div class="trust-body">We link to verified platforms like Viator and Booking.com so your payment is always protected.</div></div>
+      <div class="trust-card"><div class="trust-icon">🌿</div><div class="trust-title">Local &amp; Conservation-Led</div><div class="trust-body">Built by people obsessed with this region. Every booking supports local conservation and communities.</div></div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div class="stats-strip">
+    <div class="strip-item"><div class="strip-num">15+</div><div class="strip-label">Curated Experiences</div></div>
+    <div class="strip-divider"></div>
+    <div class="strip-item"><div class="strip-num">12</div><div class="strip-label">Premier Lodges</div></div>
+    <div class="strip-divider"></div>
+    <div class="strip-item"><div class="strip-num">Big 5</div><div class="strip-label">Wildlife Encounters</div></div>
+    <div class="strip-divider"></div>
+    <div class="strip-item"><div class="strip-num">5</div><div class="strip-label">Local Restaurants</div></div>
+  </div>
+
+  <!-- SEASONAL BANNER -->
+  <div style="background:var(--earth-dark);padding:.75rem 4rem;display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;text-align:center;">
+    <span style="font-size:.75rem;color:var(--sand);letter-spacing:.15em;text-transform:uppercase;">🦁 Peak Wildlife Season</span>
+    <span style="font-size:.82rem;color:var(--sand-light);">June–September offers the best game viewing of the year — book ahead to secure your spot.</span>
+    <button onclick="navigate('activities')" style="font-size:.72rem;color:var(--sand);letter-spacing:.12em;text-transform:uppercase;background:none;border:none;border-bottom:1px solid var(--sand);cursor:pointer;padding-bottom:1px;">Explore Experiences →</button>
+  </div>
+
+  <!-- FEATURED SPOTLIGHT -->
+  <section class="featured-section">
+    <div class="featured-card" onclick="openDetailModal(8)">
+      <div class="featured-img">
+        <div class="featured-img-bg bg-balloon" style="background-image:url('images/balloon-1.jpg');"></div>
+        <div class="featured-img-overlay"></div>
+      </div>
+      <div class="featured-content">
+        <div class="featured-tag">Featured Experience</div>
+        <h2 class="featured-title">Hot Air Balloon Safari</h2>
+        <p class="featured-desc">The bucket-list experience. Drift silently above the Greater Kruger at sunrise — elephant herds below, the Drakensberg glowing ahead.</p>
+        <div class="featured-inclusions">
+          <span class="featured-inclusion">60-minute flight at sunrise</span>
+          <span class="featured-inclusion">Champagne bush breakfast included</span>
+          <span class="featured-inclusion">Maximum 8 guests per flight</span>
+          <span class="featured-inclusion">Certificate of flight</span>
+        </div>
+        <div class="featured-footer">
+          <div class="featured-price"><span class="featured-price-amount">R3,200</span><span class="featured-price-note">per person · approx €160</span></div>
+          <div class="featured-rating"><span class="featured-rating-num">5.0 ★</span><span style="font-size:.72rem;color:rgba(232,213,176,.5);">412 reviews</span></div>
+        </div>
+        <button class="featured-book" onclick="openDetailModal(8)">View Experience &amp; Book →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PREVIEW: TOP ACTIVITIES -->
+  <section class="preview-section light">
+    <div class="preview-header">
+      <div>
+        <p class="section-label">Things To Do</p>
+        <h2 class="section-title">Top <em>Experiences</em></h2>
+      </div>
+      <button class="see-all-btn dark-btn" onclick="navigate('activities')">See All 15 Experiences →</button>
+    </div>
+    <div class="preview-grid-3" id="homeActivitiesGrid"></div>
+  </section>
+
+  <!-- PREVIEW: STAYS -->
+  <section class="preview-section dark">
+    <div class="preview-header">
+      <div>
+        <p class="section-label" style="color:var(--sand)">Where to Stay</p>
+        <h2 class="section-title" style="color:var(--sand-light)">Handpicked <em>Lodges</em></h2>
+      </div>
+      <button class="see-all-btn" onclick="navigate('stays')">See All 12 Lodges →</button>
+    </div>
+    <div class="stays-grid" id="homeStaysGrid" style="margin-top:0"></div>
+  </section>
+
+  <!-- PREVIEW: DINING -->
+  <section class="preview-section muted">
+    <div class="preview-header">
+      <div>
+        <p class="section-label">Restaurants &amp; Dining</p>
+        <h2 class="section-title">Eat <em>Like a Local</em></h2>
+      </div>
+      <button class="see-all-btn dark-btn" onclick="navigate('dining')">See All Restaurants →</button>
+    </div>
+    <div class="dining-grid" id="homeDiningGrid"></div>
+  </section>
+
+  <!-- REGION SECTION -->
+  <div class="region-section">
+    <div class="region-img">
+      <div class="region-img-bg bg-region" style="background-image:url('images/region-1.jpg');"></div>
+    </div>
+    <div class="region-content">
+      <p class="section-label">The Region</p>
+      <h2 class="section-title">Why <em>Hoedspruit?</em></h2>
+      <p class="section-body">Nestled between the Drakensberg escarpment and Kruger National Park — raw, wild, and utterly captivating.</p>
+      <div class="region-facts">
+        <div class="fact"><div class="fact-icon">🦁</div><div class="fact-text"><strong>Gateway to the Greater Kruger</strong>Home to the Big Five and over 500 bird species on the doorstep.</div></div>
+        <div class="fact"><div class="fact-icon">🌄</div><div class="fact-text"><strong>Year-Round Destination</strong>Exceptional wildlife viewing June–August when vegetation thins.</div></div>
+        <div class="fact"><div class="fact-icon">✈️</div><div class="fact-text"><strong>Eastgate Airport</strong>Direct flights from Johannesburg in under an hour.</div></div>
+        <div class="fact"><div class="fact-icon">🌿</div><div class="fact-text"><strong>Conservation-Led Tourism</strong>Every booking supports local conservation and community upliftment.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEWSLETTER -->
+  <section class="newsletter-section">
+    <div class="newsletter-inner">
+      <p class="section-label" style="color:var(--sand)">Stay in the Loop</p>
+      <h2 class="section-title">The Hoedspruit <em>Insider</em></h2>
+      <p class="section-body">Monthly wildlife sightings, new experiences, exclusive offers and hidden gems. No spam, ever.</p>
+      <div class="newsletter-form">
+        <input type="email" class="newsletter-input" id="newsletterEmail" placeholder="your@email.com">
+        <button class="newsletter-btn" onclick="subscribeNewsletter()">Subscribe</button>
+      </div>
+      <p class="newsletter-note">Join 2,400+ travellers already subscribed. Unsubscribe anytime.</p>
+      <p class="newsletter-success" id="newsletterSuccess">✦ &nbsp;You are in! Welcome to the Hoedspruit Insider.</p>
+    </div>
+  </section>
+
+  <!-- HOME FOOTER -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="#" class="nav-logo" onclick="navigate('home')">Hoedspruit <span>&amp; Beyond</span></a>
+        <p class="footer-tagline">Your trusted guide to the wild heart of South Africa's Limpopo. Curated with love by people obsessed with this land.</p>
+        <div style="display:flex;gap:1rem;margin-top:1.2rem;">
+          <a href="#" style="color:rgba(232,213,176,.4);font-size:.78rem;text-decoration:none;letter-spacing:.1em;text-transform:uppercase;">Instagram</a>
+          <a href="#" style="color:rgba(232,213,176,.4);font-size:.78rem;text-decoration:none;letter-spacing:.1em;text-transform:uppercase;">Facebook</a>
+          <a href="#" style="color:rgba(232,213,176,.4);font-size:.78rem;text-decoration:none;letter-spacing:.1em;text-transform:uppercase;">TikTok</a>
+        </div>
+      </div>
+      <div class="footer-col"><h4>Experiences</h4><ul>
+        <li><a href="#" onclick="navigate('activities')">All Activities</a></li>
+        <li><a href="#" onclick="navigate('activities')">Game Drives</a></li>
+        <li><a href="#" onclick="navigate('activities')">Adventure Sports</a></li>
+        <li><a href="#" onclick="navigate('activities')">Wildlife Encounters</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Stays &amp; Dining</h4><ul>
+        <li><a href="#" onclick="navigate('stays')">All Lodges</a></li>
+        <li><a href="#" onclick="navigate('dining')">Restaurants</a></li>
+        <li><a href="#" onclick="navigate('stays')">Luxury Lodges</a></li>
+        <li><a href="#" onclick="navigate('stays')">Eco Camps</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Plan &amp; Info</h4><ul>
+        <li><a href="#" onclick="navigate('info')">AI Trip Planner</a></li>
+        <li><a href="#" onclick="navigate('blog')">Blog &amp; Guides</a></li>
+        <li><a href="#" onclick="navigate('info')">FAQ</a></li>
+        <li><a href="#" onclick="navigate('info')">List Your Business</a></li>
+      </ul></div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2025 Hoedspruit &amp; Beyond. All rights reserved.</p>
+      <div class="footer-legal"><a href="#">Privacy Policy</a><a href="#">Terms of Service</a></div>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     PAGE: ACTIVITIES
+═══════════════════════════════════════════════════ -->
+<div class="page" id="page-activities">
+  <div class="page-header" style="background-image:linear-gradient(to bottom,rgba(26,21,16,.7) 0%,rgba(26,21,16,.5) 100%),url('images/game-drive-1.jpg');background-size:cover;background-position:center;">
+    <div class="page-header-content">
+      <p class="page-header-eyebrow">Greater Kruger · South Africa</p>
+      <h1 class="page-header-title">All <em>Experiences</em></h1>
+      <p class="page-header-sub">15 hand-curated activities — from game drives at dawn to balloon safaris at sunrise. Every experience personally vetted.</p>
+    </div>
+  </div>
+  <div class="search-bar-wrap" style="position:static;box-shadow:none;border-bottom:1px solid var(--sand-pale);">
+    <div class="search-inner">
+      <div class="search-input-wrap">
+        <input type="text" class="search-input" id="searchInput" placeholder="Search activities..." oninput="handleSearch(this.value)">
+      </div>
+      <div class="view-toggle">
+        <button class="view-btn active" id="gridViewBtn" onclick="setView('grid')">⊞ Grid</button>
+        <button class="view-btn" id="mapViewBtn" onclick="setView('map')">📍 Map</button>
+      </div>
+    </div>
+  </div>
+  <section class="activities-section" style="padding-top:2.5rem;">
+    <div class="activities-header">
+      <div>
+        <p class="section-label">Things To Do</p>
+        <h2 class="section-title">Unforgettable <em>Experiences</em></h2>
+        <p style="font-size:.78rem;color:var(--text-light);margin-top:.3rem;">Prices in ZAR · R1 ≈ €0.05 · R1 ≈ $0.055</p>
+      </div>
+      <div class="filter-tabs">
+        <button class="filter-tab active" onclick="filterCards('all',this)">All</button>
+        <button class="filter-tab" onclick="filterCards('wildlife',this)">Wildlife</button>
+        <button class="filter-tab" onclick="filterCards('adventure',this)">Adventure</button>
+        <button class="filter-tab" onclick="filterCards('dining',this)">Dining</button>
+        <button class="filter-tab" onclick="filterCards('culture',this)">Culture</button>
+      </div>
+    </div>
+    <div id="mapView"></div>
+    <div class="activity-grid" id="activityGrid"></div>
+  </section>
+  <footer style="margin-top:2rem;">
+    <div class="footer-bottom" style="border-top:none;padding:2rem 4rem;">
+      <p class="footer-copy">© 2025 Hoedspruit &amp; Beyond</p>
+      <div class="footer-legal"><a href="#" onclick="navigate('home')">Home</a><a href="#" onclick="navigate('info')">FAQ</a></div>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     PAGE: STAYS
+═══════════════════════════════════════════════════ -->
+<div class="page" id="page-stays">
+  <div class="page-header" style="background-image:linear-gradient(to bottom,rgba(26,21,16,.7) 0%,rgba(26,21,16,.5) 100%),url('images/khaya-ndlovu-1.jpg');background-size:cover;background-position:center;">
+    <div class="page-header-content">
+      <p class="page-header-eyebrow">Greater Kruger · South Africa</p>
+      <h1 class="page-header-title">Where to <em>Stay</em></h1>
+      <p class="page-header-sub">12 personally selected lodges — from candlelit eco-camps to ultra-luxury suites with private plunge pools.</p>
+    </div>
+  </div>
+  <div class="stays-filter">
+    <button class="filter-tab active" onclick="filterStays('all',this)">All</button>
+    <button class="filter-tab" onclick="filterStays('budget',this)">Budget</button>
+    <button class="filter-tab" onclick="filterStays('mid',this)">Mid-Range</button>
+    <button class="filter-tab" onclick="filterStays('luxury',this)">Luxury</button>
+    <button class="filter-tab" onclick="filterStays('ultra',this)">Ultra-Luxury</button>
+  </div>
+  <section class="stays-section" style="padding-top:3rem;">
+    <p class="section-label">Where to Stay</p>
+    <h2 class="section-title" style="color:var(--sand-light);">Sleep <em>Under the Stars</em></h2>
+    <p class="section-body" style="color:rgba(232,213,176,.6);">From off-grid bush camps lit by candlelight to architectural masterpieces with private plunge pools — all personally selected.</p>
+    <div class="stays-grid" id="staysGrid" style="margin-top:3rem;"></div>
+  </section>
+  <footer style="margin-top:0;">
+    <div class="footer-bottom" style="border-top:1px solid rgba(201,169,110,.1);padding:2rem 4rem;">
+      <p class="footer-copy">© 2025 Hoedspruit &amp; Beyond</p>
+      <div class="footer-legal"><a href="#" onclick="navigate('home')">Home</a><a href="#" onclick="navigate('activities')">Activities</a></div>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     PAGE: DINING
+═══════════════════════════════════════════════════ -->
+<div class="page" id="page-dining">
+  <div class="page-header" style="background-image:linear-gradient(to bottom,rgba(26,21,16,.7) 0%,rgba(26,21,16,.5) 100%),url('images/boma-1.jpg');background-size:cover;background-position:center;">
+    <div class="page-header-content">
+      <p class="page-header-eyebrow">Hoedspruit Town &amp; Surrounds</p>
+      <h1 class="page-header-title">Eat <em>Like a Local</em></h1>
+      <p class="page-header-sub">Five of the best tables in and around Hoedspruit — from riverside cafes to fine dining under mountain views.</p>
+    </div>
+  </div>
+  <section class="dining-section" style="padding-top:3rem;">
+    <p class="section-label">Restaurants &amp; Dining</p>
+    <h2 class="section-title">The Best <em>Tables in Town</em></h2>
+    <p class="section-body">Every restaurant listed here has been personally visited or verified by locals who know Hoedspruit well.</p>
+    <div class="dining-grid" id="diningGrid" style="margin-top:3rem;"></div>
+  </section>
+  <footer style="margin-top:0;background:var(--dusk);">
+    <div class="footer-bottom" style="border-top:1px solid rgba(201,169,110,.1);padding:2rem 4rem;">
+      <p class="footer-copy">© 2025 Hoedspruit &amp; Beyond</p>
+      <div class="footer-legal"><a href="#" onclick="navigate('home')">Home</a><a href="#" onclick="navigate('stays')">Stays</a></div>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     PAGE: BLOG
+═══════════════════════════════════════════════════ -->
+<div class="page" id="page-blog">
+  <div class="page-header" style="background:var(--dusk-mid);">
+    <div class="page-header-content">
+      <p class="page-header-eyebrow">Guides &amp; Inspiration</p>
+      <h1 class="page-header-title">From the <em>Bush</em></h1>
+      <p class="page-header-sub">Insider knowledge from people who live and breathe Hoedspruit.</p>
+    </div>
+  </div>
+  <section class="blog-section" style="padding-top:3rem;">
+    <div class="blog-grid" id="blogGrid"></div>
+  </section>
+  <footer style="margin-top:0;">
+    <div class="footer-bottom" style="border-top:1px solid rgba(61,42,20,.12);padding:2rem 4rem;background:var(--sand-pale);">
+      <p class="footer-copy" style="color:var(--text-light);">© 2025 Hoedspruit &amp; Beyond</p>
+      <div class="footer-legal"><a href="#" onclick="navigate('home')" style="color:var(--text-light)">Home</a></div>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     PAGE: INFO (Planner + FAQ + Reviews + Operator)
+═══════════════════════════════════════════════════ -->
+<div class="page" id="page-info">
+  <div class="page-header" style="background:var(--dusk-mid);">
+    <div class="page-header-content">
+      <p class="page-header-eyebrow">Plan Your Trip</p>
+      <h1 class="page-header-title">Everything You <em>Need to Know</em></h1>
+      <p class="page-header-sub">AI trip planner, frequently asked questions, share your experience, and list your business.</p>
+    </div>
+  </div>
+
+  <!-- AI PLANNER -->
+  <section class="planner-section" style="padding-top:4rem;">
+    <div class="planner-inner">
+      <div class="planner-header">
+        <p class="section-label">AI Trip Planner</p>
+        <h2 class="section-title">Let Us <em>Design Your Journey</em></h2>
+        <p class="section-body">Tell us about yourself and we will craft a personalised Hoedspruit itinerary — free.</p>
+      </div>
+      <div class="planner-form">
+        <div class="form-group"><label>Number of Days</label><select id="planDays"><option>2 days</option><option selected>3 days</option><option>4 days</option><option>5 days</option><option>7 days</option><option>10 days</option></select></div>
+        <div class="form-group"><label>Travel Group</label><select id="planGroup"><option>Solo</option><option>Couple</option><option selected>Family with kids</option><option>Group of friends</option><option>Honeymoon</option></select></div>
+        <div class="form-group"><label>Budget per person / night</label><select id="planBudget"><option>Budget (under R3,000)</option><option selected>Mid-range (R3k–R8k)</option><option>Luxury (R8k–R20k)</option><option>Ultra-luxury (R20k+)</option></select></div>
+        <div class="form-group"><label>Activity Preference</label><select id="planActivity"><option>Mostly wildlife and nature</option><option selected>Mix of wildlife and adventure</option><option>Mostly adventure sports</option><option>Relaxation and dining</option><option>Cultural experiences</option></select></div>
+        <div class="form-group full-row"><label>Anything specific? (optional)</label><textarea id="planNotes" placeholder="e.g. celebrating an anniversary, travelling with a 5-year-old, keen birder..."></textarea></div>
+        <button class="planner-submit" id="planBtn" onclick="generateItinerary()"><span id="planBtnText">✦ &nbsp;Generate My Itinerary</span></button>
+      </div>
+      <div class="ai-response" id="aiResponse"><div class="ai-response-label">✦ &nbsp;Your Personalised Hoedspruit Itinerary</div><div id="aiResponseText"></div></div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq-section">
+    <p class="section-label">Questions &amp; Answers</p>
+    <h2 class="section-title">Frequently Asked <em>Questions</em></h2>
+    <div class="faq-grid" id="faqGrid"></div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section class="reviews-section">
+    <p class="section-label">Your Experience Matters</p>
+    <h2 class="section-title">Share Your <em>Adventure</em></h2>
+    <div class="reviews-layout">
+      <div class="reviews-display">
+        <h3 id="reviewsHeading" style="display:none;font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--earth-dark);margin-bottom:1.5rem;">Recent Reviews</h3>
+        <div class="reviews-list" id="reviewsList"></div>
+        <p class="no-reviews" id="noReviewsMsg">Reviews from guests will appear here. Be the first to leave one.</p>
+      </div>
+      <div class="review-form-box">
+        <h3>Share Your Experience</h3>
+        <p>Booked through us? We would love to hear how it went.</p>
+        <div id="reviewFormInner">
+          <label class="r-label">Your Rating</label>
+          <div class="star-picker">
+            <input type="radio" name="star" id="s5" value="5"><label for="s5">★</label>
+            <input type="radio" name="star" id="s4" value="4"><label for="s4">★</label>
+            <input type="radio" name="star" id="s3" value="3"><label for="s3">★</label>
+            <input type="radio" name="star" id="s2" value="2"><label for="s2">★</label>
+            <input type="radio" name="star" id="s1" value="1"><label for="s1">★</label>
+          </div>
+          <label class="r-label">Your Name</label>
+          <input type="text" class="review-input" id="reviewName" placeholder="e.g. Sarah from Cape Town">
+          <label class="r-label">What did you book?</label>
+          <input type="text" class="review-input" id="reviewActivity" placeholder="e.g. Morning Game Drive, Kapama River Lodge">
+          <label class="r-label">Your Review</label>
+          <textarea class="review-textarea" id="reviewText" placeholder="Tell us about your experience..."></textarea>
+          <button class="review-submit" onclick="submitReview()">Submit Review</button>
+        </div>
+        <div class="review-thanks" id="reviewThanks"><p style="font-size:2rem;margin-bottom:.8rem">🌿</p><p>Thank you! Your review helps fellow travellers discover Hoedspruit.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OPERATOR APPLICATION -->
+  <section class="operator-section">
+    <div class="operator-inner">
+      <div class="operator-header">
+        <p class="section-label" style="color:var(--sand)">For Businesses</p>
+        <h2 class="section-title">Partner <em>With Us</em></h2>
+        <p class="section-body">Are you a local operator, lodge or restaurant? Reach thousands of targeted travellers. Free to apply.</p>
+      </div>
+      <div class="operator-perks">
+        <div class="perk"><div class="perk-icon">📸</div><div class="perk-title">Your Own Listing</div><div class="perk-body">Photos, description, pricing, reviews — all in one beautiful curated page.</div></div>
+        <div class="perk"><div class="perk-icon">🎯</div><div class="perk-title">Targeted Audience</div><div class="perk-body">Visitors to this site are already in the mindset to book. High-intent traffic.</div></div>
+        <div class="perk"><div class="perk-icon">🚀</div><div class="perk-title">Free to Start</div><div class="perk-body">No listing fee to begin. We take a small commission on confirmed bookings only.</div></div>
+      </div>
+      <!-- FORMSPREE: Replace YOUR_FORM_ID with your Formspree form ID from formspree.io -->
+      <form class="operator-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" id="operatorFormInner" onsubmit="showOperatorThanks(event)">
+        <div><label class="op-label">Business Name</label><input type="text" name="business_name" class="op-input" placeholder="e.g. Kapama Game Reserve" required></div>
+        <div><label class="op-label">Business Type</label>
+          <select name="business_type" class="op-select" required>
+            <option value="">Select type...</option>
+            <option>Game Drive Operator</option><option>Adventure Activity</option><option>Safari Lodge</option>
+            <option>Restaurant / Dining</option><option>Cultural Experience</option><option>Other</option>
+          </select>
+        </div>
+        <div><label class="op-label">Contact Person</label><input type="text" name="contact_name" class="op-input" placeholder="Your full name" required></div>
+        <div><label class="op-label">Email Address</label><input type="email" name="email" class="op-input" placeholder="business@email.com" required></div>
+        <div><label class="op-label">Phone Number</label><input type="tel" name="phone" class="op-input" placeholder="+27 ..."></div>
+        <div><label class="op-label">Website (if any)</label><input type="url" name="website" class="op-input" placeholder="https://..."></div>
+        <div class="full-row"><label class="op-label">Pricing (approximate)</label><input type="text" name="pricing" class="op-input" placeholder="e.g. From R850 per person, max 8 guests"></div>
+        <div class="full-row"><label class="op-label">Tell us about your offering</label><textarea name="description" class="op-textarea" placeholder="Describe your experience..." required></textarea></div>
+        <input type="hidden" name="_subject" value="New Operator Application — Hoedspruit and Beyond">
+        <button type="submit" class="operator-submit">Apply to Be Listed</button>
+      </form>
+      <div class="operator-thanks" id="operatorThanks"><h3>Application Received 🌿</h3><p>We will be in touch within 48 hours at the email you provided.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-bottom" style="border-top:1px solid rgba(201,169,110,.1);padding:2rem 4rem;">
+      <p class="footer-copy">© 2025 Hoedspruit &amp; Beyond. All rights reserved.</p>
+      <div class="footer-legal"><a href="#" onclick="navigate('home')">Home</a><a href="#">Privacy Policy</a></div>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══ MODALS ═══════════════════════════════════════ -->
+<!-- Affiliate redirect modal -->
+<div class="modal-overlay" id="affiliateModal" onclick="closeModalById('affiliateModal',event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('affiliateModal')">×</button>
+    <p class="modal-eyebrow" id="affCategory">Activity</p>
+    <h3 class="modal-title" id="affTitle">Book This Experience</h3>
+    <p class="modal-body" id="affBody">You will be taken to our trusted booking partner.</p>
+    <div class="modal-platform">
+      <div class="modal-platform-icon" id="affPlatformIcon">🌐</div>
+      <div class="modal-platform-text"><strong id="affPlatformName">Platform</strong><span id="affPlatformDesc">Secure booking</span></div>
+    </div>
+    <a href="#" id="affLink" target="_blank" class="modal-go" onclick="closeModal('affiliateModal')">Continue to Book →</a>
+    <p class="modal-note">You will be redirected to our partner site. Your booking is protected by their secure checkout.</p>
+  </div>
+</div>
+
+<!-- Detail modal -->
+<div class="detail-overlay" id="detailModal" onclick="closeDetailOutside(event)">
+  <div class="detail-modal" id="detailModalInner">
+    <button class="detail-close" onclick="closeDetailModal()">×</button>
+    <div id="detailContent"></div>
+  </div>
+</div>
+
+<!-- Dining modal -->
+<div class="dining-modal-overlay" id="diningModal" onclick="closeDiningModalOutside(event)">
+  <div class="dining-modal">
+    <button class="dining-modal-close" onclick="closeDiningModal()">×</button>
+    <div id="diningModalContent"></div>
+  </div>
+</div>
+
+<!-- Article modal -->
+<div class="article-modal-overlay" id="articleModal" onclick="if(event.target===this){document.getElementById('articleModal').classList.remove('open');document.body.style.overflow=''}">
+  <div class="article-modal">
+    <button class="article-close" onclick="document.getElementById('articleModal').classList.remove('open');document.body.style.overflow=''">×</button>
+    <div id="articleContent"></div>
+  </div>
+</div>
+
+<!-- AI CHAT WIDGET -->
+<div class="chat-bubble">
+  <div class="chat-panel" id="chatPanel">
+    <div class="chat-header">
+      <div class="chat-header-info">
+        <div class="chat-avatar">🌿</div>
+        <div><div class="chat-header-name">Hoedspruit Assistant</div><div class="chat-header-status">Online — ask me anything</div></div>
+      </div>
+      <button class="chat-close-btn" onclick="toggleChat()">×</button>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-msg bot">Hello! I am your Hoedspruit travel guide 🦁 Ask me anything about activities, lodges, best times to visit, or help planning your trip.</div>
+    </div>
+    <div class="chat-suggestions" id="chatSuggestions">
+      <button class="chat-suggestion" onclick="sendSuggestion(this)">Best time to visit?</button>
+      <button class="chat-suggestion" onclick="sendSuggestion(this)">Top activities for families?</button>
+      <button class="chat-suggestion" onclick="sendSuggestion(this)">Luxury lodge options?</button>
+    </div>
+    <div class="chat-input-row">
+      <input type="text" class="chat-input" id="chatInput" placeholder="Ask me anything..." onkeydown="if(event.key==='Enter')sendChat()">
+      <button class="chat-send" onclick="sendChat()">➤</button>
+    </div>
+  </div>
+  <button class="chat-toggle" id="chatToggle" onclick="toggleChat()">🌿</button>
+</div>
+
+<script>
+var AFFILIATE = {
+  viator:      "PASTE_YOUR_VIATOR_AFFILIATE_LINK_HERE",
+  booking:     "PASTE_YOUR_BOOKING_COM_AFFILIATE_LINK_HERE",
+  safariNow:   "PASTE_YOUR_SAFARINOW_AFFILIATE_LINK_HERE",
+  worldNomads: "PASTE_YOUR_WORLD_NOMADS_AFFILIATE_LINK_HERE"
+};
+
+// ═══════════════════════════════════════════════════
+// CAROUSEL STATE
+// ═══════════════════════════════════════════════════
+var carousels = {};
+
+function initCarousel(id, images) {
+  carousels[id] = { images: images, idx: 0 };
+}
+
+function carouselNav(id, dir, event) {
+  if (event) event.stopPropagation();
+  var c = carousels[id];
+  if (!c || c.images.length <= 1) return;
+  c.idx = (c.idx + dir + c.images.length) % c.images.length;
+  var bg = document.getElementById("cbg-" + id);
+  var dots = document.getElementById("cdots-" + id);
+  if (bg && c.images[c.idx]) {
+    bg.style.backgroundImage = "url('" + c.images[c.idx] + "')";
+  }
+  if (dots) {
+    var dotEls = dots.querySelectorAll(".dot");
+    for (var i = 0; i < dotEls.length; i++) {
+      dotEls[i].classList.toggle("active", i === c.idx);
+    }
+  }
+}
+
+function buildCarouselDots(id, count) {
+  if (count <= 1) return "";
+  var html = "<div class=\"carousel-dots\" id=\"cdots-" + id + "\">";
+  for (var i = 0; i < count; i++) {
+    html += "<span class=\"dot" + (i === 0 ? " active" : "") + "\" onclick=\"(function(e){e.stopPropagation();carousels['" + id + "'].idx=" + i + ";carouselNav('" + id + "',0,e);})(event)\"></span>";
+  }
+  html += "</div>";
+  return html;
+}
+
+function buildCarouselBtns(id) {
+  return "<button class=\"carousel-btn carousel-prev\" onclick=\"carouselNav('" + id + "',-1,event)\">&#8249;</button>" +
+         "<button class=\"carousel-btn carousel-next\" onclick=\"carouselNav('" + id + "',1,event)\">&#8250;</button>";
+}
+
+// ═══════════════════════════════════════════════════
+// ACTIVITIES DATA (15 experiences)
+// ═══════════════════════════════════════════════════
+var activities = [
+  {id:1,category:"wildlife",bg:"bg-gamedrive",icon:"🦁",badge:"popular",scarcity:"4 spots left this weekend",
+   title:"Morning Game Drive",price:"From R1,200 pp",rating:"4.9",reviews:"284",lat:-24.35,lng:31.05,
+   images:["images/game-drive-1.jpg","images/game-drive-2.jpg"],
+   platform:"Viator",link:AFFILIATE.viator,duration:"3-4 hours",minAge:"6+",cancellation:"Free cancellation 48hrs before",
+   desc:"Explore the Greater Kruger at dawn with expert trackers. Elephants, leopards and lions in their natural habitat.",
+   fullDesc:"Set out into the Greater Kruger at first light with an expert tracker and field guide. As the sun rises over the acacia-dotted plains, your open 4x4 takes you deep into territory where elephants, leopards, lions, rhino and buffalo roam freely. Every drive is different. Every drive delivers.",
+   includes:["Professional guide and tracker","Open 4x4 safari vehicle","Morning coffee and rusks","Bottled water","All park and conservation fees"],
+   brings:["Warm jacket (mornings are cold)","Camera with zoom lens","Binoculars","Neutral-coloured clothing"],
+   info:["Departs 05:30-06:00 depending on season","Returns approx 09:30","Children 6+ welcome","Photography stops throughout"]},
+
+  {id:2,category:"wildlife",bg:"bg-nightdrive",icon:"🌙",badge:"",scarcity:"",
+   title:"Night Game Drive",price:"From R980 pp",rating:"4.7",reviews:"118",lat:-24.36,lng:31.04,
+   images:["images/night-drive-1.jpg","images/night-drive-2.jpg"],
+   platform:"Viator",link:AFFILIATE.viator,duration:"3 hours",minAge:"8+",cancellation:"Free cancellation 48hrs before",
+   desc:"Venture into the Greater Kruger after dark with powerful spotlights. Leopards, civets and bush babies emerge as the African night comes alive.",
+   fullDesc:"The African bush transforms completely after sunset. Nocturnal predators become active, eyes glow in the spotlight beam, and the sounds of the night surround your vehicle. Your guide reads the darkness like a map, finding wildlife that day visitors never see. Leopard sightings on night drives are among the best in the region.",
+   includes:["Professional guide with spotlight","Open 4x4 safari vehicle","Warm blankets","Hot drinks and snacks"],
+   brings:["Very warm layers (it gets cold)","Camera with good low-light capability"],
+   info:["Departs at dusk (seasonal timing)","Returns approx 21:30","Minimum age 8","Powerful LED spotlights provided"]},
+
+  {id:3,category:"wildlife",bg:"bg-walkingsafari",icon:"👣",badge:"",scarcity:"",
+   title:"Guided Bush Walk",price:"From R750 pp",rating:"4.8",reviews:"156",lat:-24.38,lng:31.01,
+   images:["images/bush-walk-1.jpg","images/bush-walk-2.jpg"],
+   platform:"Viator",link:AFFILIATE.viator,duration:"3 hours",minAge:"12+",cancellation:"Free cancellation 48hrs before",
+   desc:"Experience the bush on foot with an armed ranger. Track animals, learn about plants, and feel the true scale of the African wilderness.",
+   fullDesc:"Walking the bush on foot is a completely different experience to a vehicle drive. Led by a qualified armed ranger, you learn to read tracks, identify plants and their medicinal uses, and understand the smaller details of the ecosystem that most visitors miss entirely.",
+   includes:["Qualified armed ranger","Walking briefing","Bottled water","Insect repellent"],
+   brings:["Sturdy closed-toe shoes","Long trousers and long sleeves","Neutral colours only (no white)"],
+   info:["Maximum 8 guests per walk","Departs 06:00 or 16:00","Not suitable during pregnancy","Fitness level: easy to moderate"]},
+
+  {id:4,category:"adventure",bg:"bg-zipline",icon:"🧗",badge:"hot",scarcity:"Selling fast — book ahead",
+   title:"Blyde Canyon Zip Line",price:"From R850 pp",rating:"4.8",reviews:"196",lat:-24.55,lng:30.8,
+   images:["images/zipline-1.jpg","images/zipline-2.jpg"],
+   platform:"Viator",link:AFFILIATE.viator,duration:"2.5-3 hours",minAge:"10+",cancellation:"Free cancellation 24hrs before",
+   desc:"Eight consecutive zip lines above the third-largest canyon on earth, reaching speeds of 120km/h.",
+   fullDesc:"Eight zip lines of increasing length above the Blyde River Canyon, culminating in a 350-metre monster line directly above the canyon floor. The views are extraordinary and the guides are exceptional.",
+   includes:["All safety equipment and harnesses","Professional guides","Helmet and gloves","Shuttle to start point"],
+   brings:["Closed-toe shoes (essential)","Secure clothing","Courage"],
+   info:["Duration approx 2.5-3 hours","Min weight 30kg, max 120kg","Not suitable for vertigo","Spectacular photography throughout"]},
+
+  {id:5,category:"adventure",bg:"bg-rafting",icon:"🚣",badge:"",scarcity:"",
+   title:"Olifants River Rafting",price:"From R680 pp",rating:"4.7",reviews:"142",lat:-24.2,lng:31.2,
+   images:["images/rafting-1.jpg","images/rafting-2.jpg"],
+   platform:"Viator",link:AFFILIATE.viator,duration:"Half day (4hrs)",minAge:"12+",cancellation:"Free cancellation 48hrs before",
+   desc:"White-water rafting through dramatic gorges with hippos and crocodiles encountered from a safe distance.",
+   fullDesc:"The Olifants River cuts through ancient rock formations creating rapids from Grade 2 to Grade 4. A half-day adventure on a wilderness river completely inaccessible by road — wildlife passes within metres of your raft.",
+   includes:["All rafting equipment","Experienced river guide","Safety briefing","Snack and drinks","Return shuttle"],
+   brings:["Swimming costume under shorts","Old shoes that can get wet","Sunscreen"],
+   info:["Suitable for beginners","River levels best Sept-Feb","Not suitable during pregnancy","Strong swimmers preferred"]},
+
+  {id:6,category:"adventure",bg:"bg-atv",icon:"🏍️",badge:"",scarcity:"",
+   title:"Bush ATV Experience",price:"From R750 pp",rating:"4.8",reviews:"231",lat:-24.4,lng:30.95,
+   images:["images/atv-1.jpg","images/atv-2.jpg"],
+   platform:"Viator",link:AFFILIATE.viator,duration:"2 hours",minAge:"16+",cancellation:"Free cancellation 24hrs before",
+   desc:"Guided quad bike trail through private game reserve with panoramic Drakensberg escarpment views.",
+   fullDesc:"Explore the bushveld on your own quad bike, following experienced guides through terrain inaccessible to regular vehicles. The route crosses open savanna and rocky ridgelines where the full sweep of the escarpment opens before you.",
+   includes:["Quad bike (automatic)","Safety helmet and gear","Experienced trail guide","Briefing session"],
+   brings:["Closed-toe shoes","Long trousers","Sunglasses"],
+   info:["No prior experience needed","Minimum age 16","Trail distance approx 25km","Morning slots best for wildlife"]},
+
+  {id:7,category:"wildlife",bg:"bg-cheetah",icon:"🐆",badge:"popular",scarcity:"Limited daily availability",
+   title:"Cheetah Walk at HESC",price:"From R1,800 pp",rating:"4.9",reviews:"318",lat:-24.37,lng:30.98,
+   images:["images/cheetah-1.jpg","images/cheetah-2.jpg"],
+   platform:"Viator",link:AFFILIATE.viator,duration:"2 hours",minAge:"8+",cancellation:"Free cancellation 48hrs before",
+   desc:"Walk alongside habituated cheetahs at the Hoedspruit Endangered Species Centre.",
+   fullDesc:"HESC has been at the forefront of South African wildlife conservation for over 20 years. The Cheetah Walk gives you an intimate guided experience alongside habituated cheetahs with expert handlers sharing the story of each individual animal.",
+   includes:["Guided walk with HESC handlers","Full HESC conservation tour","Educational talk","Conservation contribution included"],
+   brings:["Neutral-coloured clothing","Camera (photography encouraged)","Closed-toe shoes"],
+   info:["Maximum 6 guests per session","Sessions at 08:00 and 14:30","Duration approx 2 hours","HESC also home to wild dogs and rhino"]},
+
+  {id:8,category:"adventure",bg:"bg-balloon",icon:"🎈",badge:"hot",scarcity:"Only 8 seats per flight",
+   title:"Hot Air Balloon Safari",price:"From R3,200 pp",rating:"5.0",reviews:"412",lat:-24.32,lng:30.92,
+   images:["images/balloon-1.jpg","images/balloon-2.jpg"],
+   platform:"Viator",link:AFFILIATE.viator,duration:"5 hours total",minAge:"6+",cancellation:"48hrs notice required",
+   desc:"Float silently above the Greater Kruger at sunrise. Elephant herds below, the escarpment glowing ahead. Champagne breakfast included.",
+   fullDesc:"The balloon safari is the most extraordinary perspective Africa offers. Lifting off in silence as the first light touches the horizon, you drift at the pace of the wind over game-rich terrain. Below, herds cross open plains and birds take flight. Landing is followed by a full champagne breakfast in the bush.",
+   includes:["Pre-flight coffee and briefing","60-minute balloon flight","Champagne bush breakfast","Flight certificate","Ground crew and chase vehicle"],
+   brings:["Warm layers (cold at altitude)","Camera — unmissable photography","Flat closed-toe shoes"],
+   info:["Flights subject to weather — safety first","Minimum age 6, no upper limit","Not suitable during pregnancy","Book early — most popular in the region"]},
+
+  {id:9,category:"dining",bg:"bg-dining",icon:"🔥",badge:"",scarcity:"",
+   title:"Bush Boma Dinner",price:"From R950 pp",rating:"4.9",reviews:"167",lat:-24.36,lng:31.02,
+   images:["images/boma-1.jpg","images/boma-2.jpg"],
+   platform:"Viator",link:AFFILIATE.viator,duration:"3 hours",minAge:"All ages",cancellation:"Free cancellation 24hrs before",
+   desc:"Traditional South African boma dinner under a canopy of stars — open fire, marimba music, local wine.",
+   fullDesc:"The boma is one of the great African dining traditions: a circular enclosure open to the sky, built around an enormous fire. The evening begins with sundowner drinks, moves to a long table dinner of traditional South African cuisine, and ends with local musicians playing into the night.",
+   includes:["3-course dinner with local ingredients","House wines, beers and soft drinks","Live marimba music","Open fire boma setting"],
+   brings:["Smart casual clothing","A warm layer for the evening"],
+   info:["Vegetarian options available on request","Children very welcome","Private bomas for groups available","Transfers from selected lodges"]},
+
+  {id:10,category:"culture",bg:"bg-culture",icon:"🥁",badge:"",scarcity:"",
+   title:"Shangaan Cultural Village",price:"From R450 pp",rating:"4.6",reviews:"89",lat:-24.45,lng:31.1,
+   images:["images/cultural-village-1.jpg","images/cultural-village-2.jpg"],
+   platform:"Viator",link:AFFILIATE.viator,duration:"2.5 hours",minAge:"All ages",cancellation:"Free cancellation 24hrs before",
+   desc:"Immerse in the traditions of the Shangaan people — dance, drumming, storytelling and authentic cuisine.",
+   fullDesc:"The Shangaan people are the predominant cultural group of Limpopo, with a rich heritage of music and community life. You are welcomed into a living village, participate in daily activities, learn dance steps, taste traditional food and hear stories passed down for generations.",
+   includes:["Guided village tour","Traditional dance and drumming","Traditional meal","Cultural Q&A session"],
+   brings:["Open mind and willingness to participate","Camera","Comfortable walking shoes"],
+   info:["Fascinating for all ages","Directly supports local community","Photography welcomed","Combines well with a game drive"]},
+
+  {id:11,category:"wildlife",bg:"bg-horseback",icon:"🐴",badge:"",scarcity:"",
+   title:"Sunset Horseback Safari",price:"From R1,100 pp",rating:"4.8",reviews:"203",lat:-24.3,lng:31.0,
+   images:["images/horseback-1.jpg","images/horseback-2.jpg"],
+   platform:"Viator",link:AFFILIATE.viator,duration:"2 hours",minAge:"10+",cancellation:"Free cancellation 48hrs before",
+   desc:"Ride through the golden bushveld at sunset, spotting wildlife from horseback.",
+   fullDesc:"Horses are accepted as non-threatening by most wildlife, allowing you to approach animals far more closely than any vehicle. As the sun drops and the light turns gold, you ride through open plains where zebra, giraffe and wildebeest carry on undisturbed around you.",
+   includes:["Well-matched calm horse","Experienced guide rider","Helmet","Refreshments on return"],
+   brings:["Long trousers (jeans or similar)","Closed-toe shoes with small heel","Sunscreen"],
+   info:["Beginner to intermediate riders catered for","Maximum weight 95kg","Children from age 10 with experience","Horses matched to your level"]},
+
+  {id:12,category:"adventure",bg:"bg-scenicflight",icon:"✈️",badge:"",scarcity:"",
+   title:"Scenic Helicopter Flight",price:"From R2,800 pp",rating:"4.9",reviews:"94",lat:-24.37,lng:30.97,
+   images:["images/helicopter-1.jpg","images/helicopter-2.jpg"],
+   platform:"Viator",link:AFFILIATE.viator,duration:"30-60 min",minAge:"4+",cancellation:"Free cancellation 48hrs before",
+   desc:"Soar over the Drakensberg escarpment, Blyde River Canyon and the Greater Kruger in a private helicopter.",
+   fullDesc:"From the air, the true scale of the Greater Kruger reveals itself. The helicopter rises over the escarpment edge, crosses the vast canyon, and circles over game-rich plains. Custom routes available — canyon, escarpment, Big Five spotting, or all three.",
+   includes:["Private helicopter with pilot","Scenic route over canyon and escarpment","In-flight commentary","Refreshments on return"],
+   brings:["Camera (window shots are exceptional)","Sunglasses","Small backpack"],
+   info:["Departs from Eastgate Airport area","Minimum 2 passengers per flight","Subject to weather","Custom routes welcome"]},
+
+  {id:13,category:"adventure",bg:"bg-boat",icon:"⛵",badge:"",scarcity:"",
+   title:"Blyde Dam Boat Cruise",price:"From R520 pp",rating:"4.6",reviews:"73",lat:-24.58,lng:30.82,
+   images:["images/boat-cruise-1.jpg","images/boat-cruise-2.jpg"],
+   platform:"Viator",link:AFFILIATE.viator,duration:"2 hours",minAge:"All ages",cancellation:"Free cancellation 24hrs before",
+   desc:"Cruise the Blyde Dam with the Three Rondavels towering above. Hippos, crocodiles and spectacular cliff scenery.",
+   fullDesc:"The Blyde Dam sits in the heart of the canyon, surrounded by dramatic quartzite cliffs and indigenous forest. Your guided cruise takes you along the canyon walls, past hippo pools and nesting birds, with the iconic Three Rondavels reflected in the calm water.",
+   includes:["Guided boat cruise","Refreshments and snacks","Binoculars for wildlife","Life jackets"],
+   brings:["Hat and sunscreen","Camera","Light jacket"],
+   info:["Family-friendly — suitable all ages","Hippo sightings common","Sundowner cruises available","Departs from Dam viewpoint"]},
+
+  {id:15,category:"wildlife",bg:"bg-photosafari",icon:"📸",badge:"",scarcity:"",
+   title:"Photographic Safari",price:"From R2,200 pp",rating:"4.9",reviews:"47",lat:-24.34,lng:31.06,
+   images:["images/photo-safari-1.jpg","images/photo-safari-2.jpg"],
+   platform:"Viator",link:AFFILIATE.viator,duration:"Full day",minAge:"All ages",cancellation:"Free cancellation 48hrs before",
+   desc:"A full-day private safari with a specialist wildlife photographer as your guide. Optimal light, perfect positions, infinite patience.",
+   fullDesc:"The photographic safari is a completely different experience to a standard game drive. Led by a specialist wildlife photographer, you depart before sunrise for the golden hour, stop for as long as needed at every sighting, and return after sunset. Maximum 4 guests for optimal positioning.",
+   includes:["Full-day private game vehicle","Specialist photography guide","All meals and drinks","Sundowner stop","Post-safari image review session"],
+   brings:["Your camera and longest lens","Extra batteries and memory cards","Monopod or beanbag","Patience"],
+   info:["Maximum 4 guests for optimal experience","Departs before sunrise","Returns after golden hour sunset","All skill levels welcome"]}
+];
+
+// ═══════════════════════════════════════════════════
+// STAYS DATA (12 real lodges)
+// ═══════════════════════════════════════════════════
+var stays = [
+  {title:"Khaya Ndlovu Safari Manor",type:"Boutique Manor",bg:"bg-lodge1",
+   images:["images/khaya-ndlovu-1.jpg","images/khaya-ndlovu-2.jpg"],
+   platform:"Booking.com",link:AFFILIATE.booking,price:"From R5,990",rating:"4.9",reviews:"210",lat:-24.385,lng:30.932,
+   desc:"A beautiful oasis set in a fenced game reserve with stunning Drakensberg views. Famous for warm hospitality and daily game drives."},
+  {title:"Jabulani Safari",type:"Relais & Chateaux",bg:"bg-lodge10",
+   images:["images/jabulani-1.jpg","images/jabulani-2.jpg"],
+   platform:"Booking.com",link:AFFILIATE.booking,price:"From R14,000",rating:"5.0",reviews:"190",lat:-24.41,lng:31.04,
+   desc:"Globally recognised lodge born from a mission to rescue orphaned elephants. Staying here directly supports the HERD elephant orphanage."},
+  {title:"Kings Camp Timbavati",type:"Colonial Lodge",bg:"bg-lodge11",
+   images:["images/kings-camp-1.jpg","images/kings-camp-2.jpg"],
+   platform:"SafariNow",link:AFFILIATE.safariNow,price:"From R10,500",rating:"4.8",reviews:"275",lat:-24.28,lng:31.29,
+   desc:"Colonial-style elegance on the edge of a savanna plain, granting access to the famous Timbavati white lions."},
+  {title:"Kapama Karula",type:"Ultra Luxury",bg:"bg-lodge2",
+   images:["images/kapama-karula-1.jpg","images/kapama-karula-2.jpg"],
+   platform:"Booking.com",link:AFFILIATE.booking,price:"From R15,500",rating:"4.9",reviews:"342",lat:-24.425,lng:31.025,
+   desc:"The place of peace. Kapama's ultra-luxury lodge on the Klaserie River with private heated pools and world-class spa."},
+  {title:"Pondoro Game Lodge",type:"Boutique Romance",bg:"bg-lodge12",
+   images:["images/pondoro-1.jpg","images/pondoro-2.jpg"],
+   platform:"Booking.com",link:AFFILIATE.booking,price:"From R8,900",rating:"4.9",reviews:"155",lat:-24.2,lng:31.85,
+   desc:"Multi-award-winning romantic lodge on the banks of the Olifants River, with an underground wine cellar and private treehouse sleepouts."},
+  {title:"Sabi Sabi Earth Lodge",type:"Ultra Luxury",bg:"bg-lodge5",
+   images:["images/sabi-sabi-1.jpg","images/sabi-sabi-2.jpg"],
+   platform:"Booking.com",link:AFFILIATE.booking,price:"From R12,500",rating:"5.0",reviews:"208",lat:-24.933,lng:31.466,
+   desc:"An architectural masterpiece sculpted into the earth — each suite with a private plunge pool and glass-fronted bathroom."},
+  {title:"Thornybush Game Lodge",type:"Luxury Safari",bg:"bg-lodge3",
+   images:["images/thornybush-1.jpg","images/thornybush-2.jpg"],
+   platform:"SafariNow",link:AFFILIATE.safariNow,price:"From R8,400",rating:"4.8",reviews:"189",lat:-24.45,lng:31.15,
+   desc:"Classic safari experience famous for phenomenal leopard sightings and exceptionally high standards of service."},
+  {title:"Moditlo River Lodge",type:"Safari Lodge",bg:"bg-lodge9",
+   images:["images/moditlo-1.jpg","images/moditlo-2.jpg"],
+   platform:"Booking.com",link:AFFILIATE.booking,price:"From R5,200",rating:"4.7",reviews:"120",lat:-24.48,lng:31.0,
+   desc:"Set in the heart of the Blue Canyon Conservancy offering understated luxury across 36,000 acres of private reserve."},
+  {title:"Zandspruit Bush & Aero",type:"Exclusive Estate",bg:"bg-lodge8",
+   images:["images/zandspruit-1.jpg","images/zandspruit-2.jpg"],
+   platform:"Booking.com",link:AFFILIATE.booking,price:"From R4,500",rating:"4.9",reviews:"64",lat:-24.38,lng:30.96,
+   desc:"Exclusive estate with a private runway and luxury homes hidden in 650 hectares of untouched wilderness. Perfect for fly-in guests."},
+  {title:"Radisson Safari Hotel",type:"Premium Hotel",bg:"bg-lodge6",
+   images:["images/radisson-1.jpg","images/radisson-2.jpg"],
+   platform:"Booking.com",link:AFFILIATE.booking,price:"From R3,200",rating:"4.6",reviews:"88",lat:-24.36,lng:30.95,
+   desc:"South Africa's first Radisson Safari Hotel with majestic mountain views, the luxurious Amani Spa, and family-friendly facilities."},
+  {title:"Hoedspruit Wildlife Estate",type:"Estate Rentals",bg:"bg-lodge7",
+   images:["images/wildlife-estate-1.jpg","images/wildlife-estate-2.jpg"],
+   platform:"Booking.com",link:AFFILIATE.booking,price:"From R1,800",rating:"4.5",reviews:"412",lat:-24.34,lng:30.97,
+   desc:"Luxury self-catering lodges where giraffe and zebra roam freely through the grounds. Ideal for families or groups wanting privacy."},
+  {title:"Umlani Bushcamp",type:"Eco-Camp",bg:"bg-lodge4",
+   images:["images/umlani-1.jpg","images/umlani-2.jpg"],
+   platform:"Booking.com",link:AFFILIATE.booking,price:"From R4,200",rating:"4.8",reviews:"156",lat:-24.316,lng:31.316,
+   desc:"Eight reed-and-thatch huts in the Timbavati — completely unfenced, off-grid, and lit entirely by candlelight. Utterly authentic."}
+];
+
+// ═══════════════════════════════════════════════════
+// DINING DATA (5 real restaurants)
+// ═══════════════════════════════════════════════════
+var dining = [
+  {idx:0,title:"3 Bridges Cafe",type:"Riverside Cafe",bg:"bg-dining1",icon:"🌊",
+   images:["images/3-bridges-1.jpg","images/3-bridges-2.jpg"],
+   price:"A La Carte",rating:"4.5",reviews:"312",lat:-24.166,lng:30.825,link:"#",
+   desc:"An iconic vintage-feel restaurant set right on the R40 bridge over the Olifants River. Fantastic coffee, hearty lunches and unbeatable hippo views.",
+   fullDesc:"3 Bridges is one of the most beloved spots on the road to Kruger. Built into the historic bridge structure over the Olifants River, the cafe offers a charming, rustic atmosphere with coffee, hearty breakfasts and lunches. On a good day, hippos wallow in the river directly beneath your table. A must-stop whether you are heading into or out of the game reserves.",
+   info:["Open for breakfast and lunch","Walk-ins welcome","Hippo sightings from your table","Must-stop on the road to Kruger","Free parking on site"]},
+  {idx:1,title:"Sleepers Restaurant",type:"Historic Station",bg:"bg-dining2",icon:"🚂",
+   images:["images/sleepers-1.jpg","images/sleepers-2.jpg"],
+   price:"A La Carte",rating:"4.6",reviews:"420",lat:-24.345,lng:30.955,link:"#",
+   desc:"Built into the historic Hoedspruit railway station. Legendary pizzas, great atmosphere, favoured by guides and locals alike.",
+   fullDesc:"Sleepers is built directly into the old Hoedspruit railway station, one of the most characterful buildings in town. The original platform, old signage and railway memorabilia create an atmosphere you simply cannot find anywhere else. The food is excellent — particularly the wood-fired pizzas — and the energy on a busy night rivals any city restaurant. This is where the real Hoedspruit community gathers.",
+   info:["Open for lunch and dinner","Family friendly","Historic station platform setting","Great local atmosphere","Famous wood-fired pizzas"]},
+  {idx:2,title:"The Hat & Creek",type:"Premium Steakhouse",bg:"bg-dining3",icon:"🥩",
+   images:["images/hat-creek-1.jpg","images/hat-creek-2.jpg"],
+   price:"A La Carte",rating:"4.8",reviews:"560",lat:-24.35,lng:30.95,link:"#",
+   desc:"Hoedspruit's most iconic steakhouse and grill. Exceptional dry-aged cuts, fresh seafood and an extensive South African wine list.",
+   fullDesc:"The Hat and Creek is the definitive dining experience in Hoedspruit for those who appreciate quality. Dry-aged prime cuts, fresh line fish and an impressively deep wine cellar featuring some of the Cape's finest estates. The service is excellent, the setting intimate, and the quality of the meat rivals anything you will find in Johannesburg or Cape Town. Reservations are essential, especially on weekends.",
+   info:["Booking strongly recommended","Open for dinner","Smart casual dress code","Extensive South African wine list","Private dining room available"]},
+  {idx:3,title:"Blue Mountain Restaurant",type:"Fine Dining",bg:"bg-dining4",icon:"🍷",
+   images:["images/blue-mountain-1.jpg","images/blue-mountain-2.jpg","images/blue-mountain-3.jpg"],
+   price:"Set Menu",rating:"4.9",reviews:"185",lat:-25.033,lng:31.05,link:"#",
+   desc:"Hoedspruit's premier fine dining experience set against indigenous forest. A multi-course gastronomic journey with Cape wine pairing.",
+   fullDesc:"Blue Mountain Restaurant is in a category of its own for the Hoedspruit region. Located within Blue Mountain Luxury Lodge, the kitchen sources ingredients from local farms and foragers to create menus that change with the seasons. The multi-course tasting menu paired with curated Cape wines is an exceptional experience for any food lover. Set against a backdrop of indigenous forest with mountain views, it is one of the most memorable dining experiences in South Africa.",
+   info:["Reservations essential — weeks in advance","Adults only dining room","Multi-course tasting menu","Wine pairing option available","Set against indigenous forest with mountain views"]},
+  {idx:4,title:"The Fig Tree @ Ndlovu",type:"Lodge Restaurant",bg:"bg-dining5",icon:"🌿",
+   images:["images/fig-tree-1.jpg","images/fig-tree-2.jpg"],
+   price:"A La Carte",rating:"4.9",reviews:"210",lat:-24.38,lng:30.93,link:"#",
+   desc:"Dine under the stars at Khaya Ndlovu Safari Manor with sweeping views of the Drakensberg mountains.",
+   fullDesc:"The Fig Tree at Khaya Ndlovu is an experience that combines world-class cuisine with one of the most spectacular settings in the Hoedspruit region. Whether you are enjoying a high tea on the deck overlooking the reserve or a lantern-lit dinner under the open sky, the culinary team consistently delivers something memorable. Open to non-residents by prior booking, making it a perfect special occasion destination.",
+   info:["Booking essential — open to non-residents","Subject to lodge availability","A La Carte and set menus available","Incredible Drakensberg mountain sunset views","Dress: smart casual"]}
+];
+
+// ═══════════════════════════════════════════════════
+// BLOG ARTICLES
+// ═══════════════════════════════════════════════════
+var articles = [
+  {id:1,tag:"Travel Guide",img:"images/blog-1.jpg",date:"March 2026",readTime:"7 min read",bg:"bg-gamedrive",icon:"🌅",
+   title:"Best Time to Visit Hoedspruit: A Month-by-Month Guide",
+   excerpt:"Hoedspruit is brilliant year-round, but each season offers something completely different. Here is exactly what to expect — and when to book.",
+   body:"<p>Hoedspruit sits at the gateway to the Greater Kruger National Park. While it is undeniably a year-round destination, the experience changes drastically depending on the month you choose to visit. Whether you are looking for predator action, lush landscapes, or budget-friendly rates, understanding the seasons is key to planning your perfect safari.</p><h3>The Dry Season (May - September): Prime Wildlife Viewing</h3><p><strong>Best for:</strong> Big game viewing, comfortable daytime temperatures, and lower malaria risk.</p><p>This is when Hoedspruit truly earns its reputation as a world-class safari hub. Because there is virtually no rain, the vegetation thins out significantly, meaning the bush is less dense and animals are much easier to spot. More importantly, natural water sources dry up, forcing wildlife to congregate around permanent waterholes and rivers. If you want to see the Big Five, this is the most reliable time of year to do it.</p><p><em>Pro Tip:</em> While the days are sunny and pleasant (averaging 25C), the early morning and late evening game drives can be freezing. You will definitely need a warm beanie, gloves, and a windbreaker.</p><h3>The Wet Season (November - March): Lush and Alive</h3><p><strong>Best for:</strong> Bird watching, photography, baby animals, and lush scenery.</p><p>Summer brings the rains, and the bushveld undergoes a miraculous transformation. Within days of the first downpour, the landscape turns into a thick, vibrant green. This is the birthing season for many plains game species like impala, which in turn brings high predator activity. It is also an absolute paradise for birders, as migratory species arrive in their thousands.</p><p><em>Pro Tip:</em> It can get incredibly hot and humid during these months, often peaking above 35C, with spectacular afternoon thunderstorms that make for extraordinary photography.</p><h3>The Shoulder Seasons (April and October): Sweet Spot</h3><p><strong>Best for:</strong> The best of both worlds.</p><p>April and October provide a sweet spot — temperatures are mild, the bush is transitioning, and visitor numbers are generally lower than peak winter months. Rates at most lodges are also more attractive. Elephant calves are often born during October, making for some of the most heartwarming sightings of the year.</p><h3>Our Recommendation</h3><p>First-timers: come in July or August — you simply cannot go wrong. The game viewing is at its peak and the weather is perfect. Returning visitors or birding enthusiasts: try November or December for the dramatic green season transformation.</p>"},
+  {id:2,tag:"Wildlife",img:"images/blog-2.jpg",date:"February 2026",readTime:"9 min read",bg:"bg-cheetah",icon:"🦁",
+   title:"The Big Five: A Complete First-Timer Guide",
+   excerpt:"Lion, leopard, elephant, rhino, buffalo — what they mean, where to find them, and the tips no guide book tells you.",
+   body:"<p>The term Big Five was originally coined by big-game hunters in the 19th century. It did not refer to the size of the animals, but rather the difficulty and danger involved in hunting them on foot. Today, the only shooting we do is with a camera. Spotting all five during your time in Hoedspruit is the holy grail of any safari.</p><h3>1. The African Elephant</h3><p>The most commonly seen of the Big Five in the Greater Kruger. These highly intelligent, deeply emotional creatures are a joy to watch. You will frequently find them stripping bark from trees, taking mud baths, or crossing the roads right in front of your vehicle.</p><p><em>Tracking Tip:</em> Look for freshly broken branches, massive round footprints, and fresh dung. If an elephant flaps its ears and mock-charges, respect its space — your guide will know exactly how to read their body language.</p><h3>2. The Cape Buffalo</h3><p>Often considered the most dangerous of the five when encountered on foot. They are notorious for their unpredictable temper. In the dry season, you can find massive herds of up to 500 individuals kicking up dust on the plains. Older males, known as Dagga Boys, often leave the herd to live solitary lives in the thick bush.</p><h3>3. The Lion</h3><p>The apex predator. Lions are most active at night and during the very early hours of the morning. During the day, you will most likely find them sleeping in the shade — they can sleep up to 20 hours a day. <em>Tracking Tip:</em> Listen for their deep, guttural roars at dawn and dusk. Roaring can carry for up to 8 kilometres across the savanna.</p><h3>4. The Leopard</h3><p>The most elusive and solitary member of the Big Five. Hoedspruit, specifically the adjacent Timbavati and Sabi Sands reserves, is globally renowned for its leopard population. They are incredibly stealthy and strong, often dragging kills twice their body weight high into the branches of Marula trees to keep them away from hyenas. <em>Tracking Tip:</em> Always scan the horizontal branches of large trees. Their spotted coats offer perfect camouflage in dappled light.</p><h3>5. The Rhinoceros</h3><p>Due to the tragic ongoing poaching crisis, rhino sightings are incredibly special. Guides will generally ask you not to share the location of a rhino sighting on social media to protect them. The White Rhino is a grazer with a wide square lip, while the Black Rhino is a browser with a hooked lip. Staying in a private reserve around Hoedspruit significantly increases your chances of seeing all five — private land allows off-road driving and night drives that the national park does not permit.</p>"},
+  {id:3,tag:"Hidden Gems",img:"images/blog-3.jpg",date:"January 2026",readTime:"6 min read",bg:"bg-zipline",icon:"🗺️",
+   title:"7 Hidden Gems Near Kruger Nobody Tells You About",
+   excerpt:"Everyone knows the big lodges. Here is what the locals actually do — and the spots most tourists completely miss.",
+   body:"<p>While the game reserves surrounding Hoedspruit are the main draw, the town is perfectly positioned at the foot of the Drakensberg Escarpment. This allows for incredible day trips into the mountains and along the Panorama Route. Here are 7 gems you cannot miss.</p><h3>1. God's Window at Sunrise</h3><p>Located on the Panorama Route, God's Window offers a sheer 700-metre drop overlooking the Lowveld. While it is a famous stop, the secret is timing. Get there right at sunrise. Before the tour buses arrive, you can watch the morning mist fill the canyon below while the sun paints the cliffs gold. It is a transcendent experience.</p><h3>2. The Graskop Gorge Lift</h3><p>A brilliant feat of engineering and highly underrated. A glass-fronted elevator drops you 51 metres down the face of the gorge into pristine Afromontane forest. An elevated wooden boardwalk winds through the indigenous forest, complete with suspension bridges and incredible flora. Brilliant for families.</p><h3>3. Mariepskop Mountain</h3><p>For the adventurous driver, the drive up Mariepskop is breathtaking. It is the highest peak in the northern Drakensberg. The view from the top looks directly down into the Blyde River Canyon and across the sprawling flatlands of the Kruger. Far less crowded than the traditional Panorama Route viewpoints.</p><h3>4. Jessica the Hippo</h3><p>A Hoedspruit icon. Rescued as a baby during the devastating 2000 floods by a local ranger, Jessica was raised as part of the family. Today, she is completely free to roam the river with wild hippos but chooses to return to the house daily. A completely unique opportunity to interact safely with a species known for its aggression.</p><h3>5. Echo Caves</h3><p>While the Sudwala Caves get most of the tourist traffic, the Echo Caves are equally fascinating and much quieter. The local Pedi people used these limestone caves as a hiding place, using the stalactites as natural drums to echo warnings through the tunnels.</p><h3>6. Blyde Dam Boat Cruise</h3><p>Looking down at the canyon from the Three Rondavels is beautiful, but looking up from the water is spectacular. A boat cruise takes you right to the base of the towering cliffs, including the Kadishi Tufa waterfall — one of the few rare tufa waterfalls in the world that continues to build its own rock face.</p><h3>7. The Kinyonga Reptile Centre</h3><p>If you are travelling with kids, this is a must-visit. Kinyonga does vital conservation and education work regarding reptiles and amphibians. You can safely view some of the most notorious snakes in Africa, including the Black Mamba and Puff Adder, while learning how to properly handle and respect them in the wild.</p>"}
+];
+
+// ═══════════════════════════════════════════════════
+// FAQ DATA
+// ═══════════════════════════════════════════════════
+var faqs = [
+  {q:"Do I need to book activities in advance?",
+   a:"Yes, especially for peak season (June-August) and popular experiences like the Hot Air Balloon and Cheetah Walk. Book at least 3-4 weeks ahead. Game drives can sometimes be arranged with 1-2 days notice in low season."},
+  {q:"Is Hoedspruit safe for tourists?",
+   a:"Yes. The Greater Kruger area is widely considered one of the safest tourism destinations in South Africa. Private game reserves have excellent security and all our recommended operators are vetted and well-established."},
+  {q:"What is the best age for children on a safari?",
+   a:"Most private game lodges accept children aged 6+ for game drives. For families with very young children, Kapama and the Radisson Safari Hotel have specialist family programmes. The Cheetah Walk is suitable from age 8+."},
+  {q:"Do I need malaria tablets?",
+   a:"Hoedspruit falls within a low-risk malaria area. Most travellers take prophylactics as a precaution during summer (October-April). Consult your doctor before travelling. Risk is minimal during dry winter months."},
+  {q:"How do I get to Hoedspruit?",
+   a:"Fly to Eastgate Airport (HDS) from Johannesburg OR Tambo — the flight takes under an hour with daily connections. You can also self-drive from Johannesburg (approximately 5-6 hours via the N4)."},
+  {q:"What currency is used and can I pay by card?",
+   a:"South African Rand (ZAR). Most lodges and larger operators accept credit card but it is wise to carry some cash. ATMs are available in Hoedspruit town. Online bookings via our partner platforms accept all major cards."},
+  {q:"What should I pack for a safari?",
+   a:"Neutral-coloured clothing (khaki, olive, beige), warm layers for early morning drives, a good hat, sunscreen, binoculars and a camera with a zoom lens. Bright colours and strong perfumes are best avoided in the bush."},
+  {q:"Can I book accommodation and activities separately?",
+   a:"Yes, absolutely. Many visitors mix lodge stays with day activities. Use our AI Trip Planner for a customised itinerary, or chat with our travel assistant for personalised advice."}
+];
+
+// ═══════════════════════════════════════════════════
+// PAGE ROUTER
+// ═══════════════════════════════════════════════════
+var currentPage = "home";
+
+function navigate(page) {
+  // Hide all pages
+  var pages = document.querySelectorAll(".page");
+  for (var i = 0; i < pages.length; i++) {
+    pages[i].classList.remove("active");
+  }
+  // Show target page
+  var target = document.getElementById("page-" + page);
+  if (!target) return;
+  target.classList.add("active");
+  currentPage = page;
+  window.scrollTo(0, 0);
+
+  // Update nav active state
+  var links = document.querySelectorAll(".nav-links a");
+  for (var j = 0; j < links.length; j++) {
+    var linkPage = links[j].getAttribute("data-page");
+    links[j].style.opacity = (linkPage === page) ? "1" : "0.8";
+    links[j].style.color = (linkPage === page) ? "var(--sand)" : "";
+  }
+
+  // Render content for page
+  if (page === "activities") renderActivities();
+  if (page === "stays") renderStays();
+  if (page === "dining") renderDining();
+  if (page === "blog") renderBlog();
+  if (page === "info") { renderFAQ(); loadReviews(); }
+}
+
+// ═══════════════════════════════════════════════════
+// CAROUSEL STATE
+// ═══════════════════════════════════════════════════
+var carousels = {};
+
+function initCarousel(id, images) {
+  carousels[id] = { images: images, idx: 0 };
+}
+
+function carouselNav(id, dir, event) {
+  if (event) event.stopPropagation();
+  var c = carousels[id];
+  if (!c || c.images.length <= 1) return;
+  c.idx = (c.idx + dir + c.images.length) % c.images.length;
+  var bg = document.getElementById("cbg-" + id);
+  var dots = document.getElementById("cdots-" + id);
+  if (bg && c.images[c.idx]) {
+    bg.style.backgroundImage = "url('" + c.images[c.idx] + "')";
+  }
+  if (dots) {
+    var dotEls = dots.querySelectorAll(".dot");
+    for (var i = 0; i < dotEls.length; i++) {
+      dotEls[i].classList.toggle("active", i === c.idx);
+    }
+  }
+}
+
+function buildDots(id, count) {
+  if (count <= 1) return "";
+  var html = "<div class=\"carousel-dots\" id=\"cdots-" + id + "\">";
+  for (var i = 0; i < count; i++) {
+    html += "<span class=\"dot" + (i === 0 ? " active" : "") + "\" onclick=\"(function(e){e.stopPropagation();if(carousels['" + id + "']){carousels['" + id + "'].idx=" + i + ";carouselNav('" + id + "',0,e);}})( event)\"></span>";
+  }
+  html += "</div>";
+  return html;
+}
+
+// ═══════════════════════════════════════════════════
+// ACTIVITY CARD BUILDER (shared by home + activities page)
+// ═══════════════════════════════════════════════════
+function buildActivityCard(a) {
+  var cid = "act-" + a.id;
+  var imgs = (a.images && a.images[0]) ? a.images : [""];
+  initCarousel(cid, imgs);
+  var stars = "";
+  for (var s = 0; s < Math.round(parseFloat(a.rating)); s++) stars += "★";
+  var firstImg = imgs[0] ? " style=\"background-image:url('" + imgs[0] + "')\"" : "";
+  var badgeHtml = "";
+  if (a.badge === "popular") badgeHtml = "<div class=\"card-badge badge-popular\">Most Popular</div>";
+  if (a.badge === "hot") badgeHtml = "<div class=\"card-badge badge-hot\">🔥 Hot</div>";
+  var scarcityHtml = a.scarcity ? "<span class=\"scarcity\">" + a.scarcity + "</span>" : "<span></span>";
+  var html = "";
+  html += "<div class=\"activity-card\">";
+  html += "<div class=\"card-img\">";
+  html += "<div class=\"card-img-bg " + a.bg + "\" id=\"cbg-" + cid + "\"" + firstImg + "></div>";
+  html += "<div class=\"card-img-icon\">" + a.icon + "</div>";
+  html += "<div class=\"card-category\">" + a.category + "</div>";
+  html += badgeHtml;
+  html += "<div class=\"card-price\">" + a.price + "</div>";
+  if (imgs.length > 1) {
+    html += "<button class=\"carousel-btn carousel-prev\" onclick=\"carouselNav('" + cid + "',-1,event)\">&#8249;</button>";
+    html += "<button class=\"carousel-btn carousel-next\" onclick=\"carouselNav('" + cid + "',1,event)\">&#8250;</button>";
+    html += buildDots(cid, imgs.length);
+  }
+  html += "</div>";
+  html += "<div class=\"card-body\">";
+  html += "<h3 class=\"card-title\">" + a.title + "</h3>";
+  html += "<p class=\"card-desc\">" + a.desc + "</p>";
+  html += "<div class=\"card-reviews-bar\">";
+  html += "<span class=\"card-reviews-stars\">" + stars + "</span>";
+  html += "<span class=\"card-reviews-text\"><strong>" + a.rating + "</strong> &middot; " + a.reviews + " reviews on Google</span>";
+  html += "</div>";
+  html += "<div class=\"card-meta\">" + scarcityHtml;
+  html += "<button class=\"card-book\" onclick=\"openDetailModal(" + a.id + ")\">View &amp; Book</button>";
+  html += "</div></div></div>";
+  return html;
+}
+
+// ═══════════════════════════════════════════════════
+// RENDER ACTIVITIES (full page)
+// ═══════════════════════════════════════════════════
+var currentFilter = "all";
+var searchQuery = "";
+
+function renderActivities() {
+  var filtered = activities.slice();
+  if (currentFilter !== "all") filtered = filtered.filter(function(a){ return a.category === currentFilter; });
+  if (searchQuery) filtered = filtered.filter(function(a){
+    return a.title.toLowerCase().indexOf(searchQuery) > -1
+        || a.desc.toLowerCase().indexOf(searchQuery) > -1
+        || a.category.toLowerCase().indexOf(searchQuery) > -1;
+  });
+  var grid = document.getElementById("activityGrid");
+  if (!grid) return;
+  if (!filtered.length) { grid.innerHTML = "<p style='color:var(--text-light);padding:2rem 0;grid-column:1/-1'>No experiences match your search.</p>"; return; }
+  var html = "";
+  for (var i = 0; i < filtered.length; i++) html += buildActivityCard(filtered[i]);
+  grid.innerHTML = html;
+}
+
+function filterCards(cat, btn) {
+  currentFilter = cat;
+  var tabs = document.querySelectorAll(".filter-tab");
+  for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove("active");
+  btn.classList.add("active");
+  renderActivities();
+}
+
+function handleSearch(val) {
+  searchQuery = val.toLowerCase();
+  renderActivities();
+  if (val) setView("grid");
+}
+
+// ═══════════════════════════════════════════════════
+// HOME PREVIEW GRIDS
+// ═══════════════════════════════════════════════════
+function renderHomePreviews() {
+  // Top 6 activities (game drive, balloon, cheetah, zipline, horseback, night drive)
+  var featured = [1, 8, 7, 4, 11, 2];
+  var homeGrid = document.getElementById("homeActivitiesGrid");
+  if (homeGrid) {
+    var html = "";
+    for (var i = 0; i < featured.length; i++) {
+      for (var j = 0; j < activities.length; j++) {
+        if (activities[j].id === featured[i]) { html += buildActivityCard(activities[j]); break; }
+      }
+    }
+    homeGrid.innerHTML = html;
+  }
+
+  // 4 preview lodges (range of price points)
+  var lodgePreviewIdxs = [0, 1, 3, 11]; // Khaya Ndlovu, Jabulani, Kapama Karula, Umlani
+  var homeStays = document.getElementById("homeStaysGrid");
+  if (homeStays) {
+    var sh = "";
+    for (var k = 0; k < lodgePreviewIdxs.length; k++) {
+      var s = stays[lodgePreviewIdxs[k]];
+      if (!s) continue;
+      var cid = "stay-home-" + k;
+      var imgs = (s.images && s.images[0]) ? s.images : [""];
+      initCarousel(cid, imgs);
+      var stars = "";
+      for (var st = 0; st < Math.round(parseFloat(s.rating)); st++) stars += "★";
+      var firstImg = imgs[0] ? " style=\"background-image:url('" + imgs[0] + "')\"" : "";
+      sh += "<div class=\"stay-card\">";
+      sh += "<div class=\"stay-bg " + s.bg + "\" id=\"cbg-" + cid + "\"" + firstImg + "></div>";
+      sh += "<div class=\"stay-overlay\">";
+      sh += "<div class=\"stay-type\">" + s.type + "</div>";
+      sh += "<div class=\"stay-name\">" + s.title + "</div>";
+      sh += "<div class=\"stay-rating\"><span class=\"stay-stars\">" + stars + "</span><span class=\"stay-review-count\">" + s.rating + " &middot; " + s.reviews + " reviews</span></div>";
+      sh += "<div class=\"stay-desc\">" + s.desc + "</div>";
+      sh += "<div class=\"stay-footer\"><div class=\"stay-price\">" + s.price + " <span>/ night pp</span></div>";
+      sh += "<button class=\"stay-book\" onclick=\"openStayModal(" + lodgePreviewIdxs[k] + ")\">Check Availability</button>";
+      sh += "</div></div></div>";
+    }
+    homeStays.innerHTML = sh;
+  }
+
+  // 3 preview dining
+  var diningPreviewIdxs = [0, 2, 3]; // 3 Bridges, Hat & Creek, Blue Mountain
+  var homeDining = document.getElementById("homeDiningGrid");
+  if (homeDining) {
+    var dh = "";
+    for (var d = 0; d < diningPreviewIdxs.length; d++) {
+      var di = dining[diningPreviewIdxs[d]];
+      if (!di) continue;
+      var dcid = "din-home-" + d;
+      var dimgs = (di.images && di.images[0]) ? di.images : [""];
+      initCarousel(dcid, dimgs);
+      var dstars = "";
+      for (var ds = 0; ds < Math.round(parseFloat(di.rating)); ds++) dstars += "★";
+      var dfirstImg = dimgs[0] ? " style=\"background-image:url('" + dimgs[0] + "')\"" : "";
+      dh += "<div class=\"dining-card\">";
+      dh += "<div class=\"dining-card-img\"><div class=\"dining-card-img-bg " + di.bg + "\" id=\"cbg-" + dcid + "\"" + dfirstImg + "></div>";
+      dh += "<div class=\"dining-card-icon\">" + di.icon + "</div>";
+      dh += "<div class=\"dining-card-tag\">" + di.type + "</div></div>";
+      dh += "<div class=\"dining-card-body\"><h3 class=\"dining-card-title\">" + di.title + "</h3>";
+      dh += "<p class=\"dining-card-desc\">" + di.desc + "</p>";
+      dh += "<div class=\"dining-card-meta\"><div><div class=\"dining-card-stars\">" + dstars + "</div>";
+      dh += "<div style='font-size:.72rem;color:rgba(232,213,176,.45)'>" + di.reviews + " reviews</div></div>";
+      dh += "<div class=\"dining-card-price\">" + di.price + "</div>";
+      dh += "<button class=\"dining-card-btn\" onclick=\"openDiningModal(" + diningPreviewIdxs[d] + ")\">View Restaurant</button>";
+      dh += "</div></div></div>";
+    }
+    homeDining.innerHTML = dh;
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// RENDER STAYS (full page)
+// ═══════════════════════════════════════════════════
+var currentStayFilter = "all";
+
+function filterStays(filter, btn) {
+  currentStayFilter = filter;
+  var tabs = document.querySelectorAll(".stays-filter .filter-tab");
+  for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove("active");
+  btn.classList.add("active");
+  renderStays();
+}
+
+function getPriceTier(price) {
+  var num = parseInt(price.replace(/[^0-9]/g, ""));
+  if (num < 4000) return "budget";
+  if (num < 8000) return "mid";
+  if (num < 12000) return "luxury";
+  return "ultra";
+}
+
+function renderStays() {
+  var grid = document.getElementById("staysGrid");
+  if (!grid) return;
+  var filtered = stays.slice();
+  if (currentStayFilter !== "all") {
+    filtered = filtered.filter(function(s) { return getPriceTier(s.price) === currentStayFilter; });
+  }
+  var html = "";
+  for (var i = 0; i < stays.length; i++) {
+    var s = stays[i];
+    if (currentStayFilter !== "all" && getPriceTier(s.price) !== currentStayFilter) continue;
+    var realIdx = i;
+    var cid = "stay-" + i;
+    var imgs = (s.images && s.images[0]) ? s.images : [""];
+    initCarousel(cid, imgs);
+    var stars = "";
+    for (var j = 0; j < Math.round(parseFloat(s.rating)); j++) stars += "★";
+    var firstImg = imgs[0] ? " style=\"background-image:url('" + imgs[0] + "')\"" : "";
+    var tier = getPriceTier(s.price);
+    var tierLabel = {budget:"Budget",mid:"Mid-Range",luxury:"Luxury","ultra":"Ultra-Luxury"}[tier] || "";
+    var tierClass = {budget:"price-budget",mid:"price-mid",luxury:"price-luxury","ultra":"price-ultra"}[tier] || "";
+    html += "<div class=\"stay-card\">";
+    html += "<div class=\"stay-bg " + s.bg + "\" id=\"cbg-" + cid + "\"" + firstImg + "></div>";
+    if (imgs.length > 1) {
+      html += "<button class=\"carousel-btn carousel-prev\" onclick=\"carouselNav('" + cid + "',-1,event)\" style=\"top:40%;z-index:5\">&#8249;</button>";
+      html += "<button class=\"carousel-btn carousel-next\" onclick=\"carouselNav('" + cid + "',1,event)\" style=\"top:40%;z-index:5\">&#8250;</button>";
+    }
+    html += "<div class=\"stay-overlay\">";
+    html += "<div class=\"price-badge " + tierClass + "\">" + tierLabel + "</div>";
+    html += "<div class=\"stay-type\">" + s.type + "</div>";
+    html += "<div class=\"stay-name\">" + s.title + "</div>";
+    html += "<div class=\"stay-rating\"><span class=\"stay-stars\">" + stars + "</span><span class=\"stay-review-count\">" + s.rating + " &middot; " + s.reviews + " reviews</span></div>";
+    html += "<div class=\"stay-desc\">" + s.desc + "</div>";
+    html += "<div class=\"stay-footer\"><div class=\"stay-price\">" + s.price + " <span>/ night pp</span></div>";
+    html += "<button class=\"stay-book\" onclick=\"openStayModal(" + realIdx + ")\">Check Availability</button>";
+    html += "</div></div></div>";
+  }
+  grid.innerHTML = html || "<p style='color:rgba(232,213,176,.5);padding:2rem 0;grid-column:1/-1'>No lodges in this price range.</p>";
+}
+
+function openStayModal(i) {
+  var s = stays[i];
+  if (!s) return;
+  document.getElementById("affCategory").textContent = s.type;
+  document.getElementById("affTitle").textContent = s.title;
+  document.getElementById("affBody").textContent = "You are about to check availability for " + s.title + " on " + s.platform + ". You will pay the same price as booking direct.";
+  document.getElementById("affPlatformIcon").textContent = s.platform === "SafariNow" ? "🏕️" : "🏨";
+  document.getElementById("affPlatformName").textContent = s.platform;
+  document.getElementById("affPlatformDesc").textContent = "Best price guarantee &middot; Secure checkout";
+  document.getElementById("affLink").href = s.link;
+  document.getElementById("affiliateModal").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+// ═══════════════════════════════════════════════════
+// RENDER DINING (full page)
+// ═══════════════════════════════════════════════════
+function renderDining() {
+  var grid = document.getElementById("diningGrid");
+  if (!grid) return;
+  var html = "";
+  for (var i = 0; i < dining.length; i++) {
+    var d = dining[i];
+    var cid = "din-" + i;
+    var imgs = (d.images && d.images[0]) ? d.images : [""];
+    initCarousel(cid, imgs);
+    var stars = "";
+    for (var s = 0; s < Math.round(parseFloat(d.rating)); s++) stars += "★";
+    var firstImg = imgs[0] ? " style=\"background-image:url('" + imgs[0] + "')\"" : "";
+    var infoHtml = "";
+    if (d.info) for (var j = 0; j < d.info.length; j++) infoHtml += "<li style='color:rgba(232,213,176,.55);font-size:.8rem;margin-bottom:.3rem;list-style:none;padding-left:.8rem;border-left:2px solid var(--sand)'>" + d.info[j] + "</li>";
+    html += "<div class=\"dining-card\">";
+    html += "<div class=\"dining-card-img\"><div class=\"dining-card-img-bg " + d.bg + "\" id=\"cbg-" + cid + "\"" + firstImg + "></div>";
+    html += "<div class=\"dining-card-icon\">" + d.icon + "</div>";
+    html += "<div class=\"dining-card-tag\">" + d.type + "</div>";
+    if (imgs.length > 1) {
+      html += "<button class=\"carousel-btn carousel-prev\" onclick=\"carouselNav('" + cid + "',-1,event)\">&#8249;</button>";
+      html += "<button class=\"carousel-btn carousel-next\" onclick=\"carouselNav('" + cid + "',1,event)\">&#8250;</button>";
+      html += buildDots(cid, imgs.length);
+    }
+    html += "</div><div class=\"dining-card-body\"><h3 class=\"dining-card-title\">" + d.title + "</h3>";
+    html += "<p class=\"dining-card-desc\">" + d.desc + "</p>";
+    html += "<ul style='margin-bottom:1rem;padding:0'>" + infoHtml + "</ul>";
+    html += "<div class=\"dining-card-meta\"><div><div class=\"dining-card-stars\">" + stars + "</div><div style='font-size:.72rem;color:rgba(232,213,176,.45)'>" + d.reviews + " reviews</div></div>";
+    html += "<div class=\"dining-card-price\">" + d.price + "</div>";
+    html += "<button class=\"dining-card-btn\" onclick=\"openDiningModal(" + i + ")\">View Restaurant</button>";
+    html += "</div></div></div>";
+  }
+  grid.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════
+// DINING DETAIL MODAL
+// ═══════════════════════════════════════════════════
+function openDiningModal(i) {
+  var d = dining[i];
+  var stars = "";
+  for (var s = 0; s < Math.round(parseFloat(d.rating)); s++) stars += "★";
+  var firstImg = (d.images && d.images[0]) ? d.images[0] : "";
+  var imgStyle = firstImg ? " style=\"background-image:url('" + firstImg + "')\"" : "";
+  var infoHtml = "";
+  if (d.info) for (var j = 0; j < d.info.length; j++) infoHtml += "<div class=\"dining-modal-info-item\">" + d.info[j] + "</div>";
+  var html = "";
+  html += "<div class=\"dining-modal-hero\"><div class=\"dining-modal-hero-bg " + d.bg + "\"" + imgStyle + "></div>";
+  html += "<div class=\"dining-modal-hero-overlay\"></div><div class=\"dining-modal-hero-meta\">";
+  html += "<div><div class=\"dining-modal-type\">" + d.type + "</div><div class=\"dining-modal-name\">" + d.title + "</div></div>";
+  html += "<div class=\"dining-modal-price-tag\">" + d.price + "</div></div></div>";
+  html += "<div class=\"dining-modal-body\"><div class=\"dining-modal-rating\">";
+  html += "<span class=\"dining-modal-stars\">" + stars + "</span>";
+  html += "<span class=\"dining-modal-rating-text\"><strong>" + d.rating + " / 5</strong> &middot; " + d.reviews + " reviews</span></div>";
+  html += "<p class=\"dining-modal-desc\">" + d.fullDesc + "</p>";
+  html += "<div class=\"dining-modal-info\">" + infoHtml + "</div>";
+  html += "<div class=\"dining-modal-cta\"><div class=\"dining-modal-cta-left\">";
+  html += "<div class=\"dining-modal-name-small\">" + d.title + "</div>";
+  html += "<div class=\"dining-modal-note\">Add restaurant website link in the dining data</div></div>";
+  html += "<button class=\"dining-modal-visit-btn\" onclick=\"if('" + d.link + "'!='#')window.open('" + d.link + "','_blank')\">Visit Website &rarr;</button>";
+  html += "</div></div>";
+  document.getElementById("diningModalContent").innerHTML = html;
+  document.getElementById("diningModal").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function closeDiningModal() { document.getElementById("diningModal").classList.remove("open"); document.body.style.overflow = ""; }
+function closeDiningModalOutside(e) { if (e.target === document.getElementById("diningModal")) closeDiningModal(); }
+
+// ═══════════════════════════════════════════════════
+// BLOG
+// ═══════════════════════════════════════════════════
+function renderBlog() {
+  var grid = document.getElementById("blogGrid");
+  if (!grid) return;
+  var html = "";
+  for (var i = 0; i < articles.length; i++) {
+    var a = articles[i];
+    html += "<div class=\"blog-card\" onclick=\"openArticle(" + a.id + ")\">";
+    html += "<div class=\"blog-img\"><div class=\"blog-img-bg " + a.bg + "\" style=\"" + (a.img ? "background-image:url('"+a.img+"');" : "") + "\"></div>";
+    html += "<div class=\"card-img-icon\" style=\"opacity:.18\">" + a.icon + "</div>";
+    html += "<div class=\"blog-tag\">" + a.tag + "</div></div>";
+    html += "<div class=\"blog-body\"><div class=\"blog-meta\">" + a.date + " &middot; " + a.readTime + "</div>";
+    html += "<h3 class=\"blog-title\">" + a.title + "</h3>";
+    html += "<p class=\"blog-excerpt\">" + a.excerpt + "</p>";
+    html += "<span class=\"blog-read\">Read Full Article &rarr;</span></div></div>";
+  }
+  grid.innerHTML = html;
+}
+
+function openArticle(id) {
+  var a = null;
+  for (var i = 0; i < articles.length; i++) { if (articles[i].id === id) { a = articles[i]; break; } }
+  if (!a) return;
+  document.getElementById("articleContent").innerHTML =
+    "<p class=\"article-tag\">" + a.tag + "</p>" +
+    "<h2 class=\"article-title\">" + a.title + "</h2>" +
+    "<p class=\"article-meta\">" + a.date + " &middot; " + a.readTime + " &middot; Hoedspruit &amp; Beyond</p>" +
+    "<div class=\"article-body\">" + a.body + "</div>";
+  document.getElementById("articleModal").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+// ═══════════════════════════════════════════════════
+// FAQ
+// ═══════════════════════════════════════════════════
+function renderFAQ() {
+  var html = "";
+  for (var i = 0; i < faqs.length; i++) {
+    html += "<div class=\"faq-item\" id=\"faq" + i + "\"><div class=\"faq-q\" onclick=\"toggleFAQ(" + i + ")\">" + faqs[i].q + "<span class=\"faq-icon\">+</span></div>";
+    html += "<div class=\"faq-a\"><div class=\"faq-a-inner\">" + faqs[i].a + "</div></div></div>";
+  }
+  document.getElementById("faqGrid").innerHTML = html;
+}
+
+function toggleFAQ(i) { document.getElementById("faq" + i).classList.toggle("open"); }
+
+// ═══════════════════════════════════════════════════
+// MAP VIEW
+// ═══════════════════════════════════════════════════
+var map = null;
+
+function setView(view) {
+  var gBtn = document.getElementById("gridViewBtn");
+  var mBtn = document.getElementById("mapViewBtn");
+  if (gBtn) gBtn.classList.toggle("active", view === "grid");
+  if (mBtn) mBtn.classList.toggle("active", view === "map");
+  var grid = document.getElementById("activityGrid");
+  var mapEl = document.getElementById("mapView");
+  if (!grid || !mapEl) return;
+  if (view === "map") {
+    grid.style.display = "none";
+    mapEl.classList.add("visible");
+    if (!map) {
+      map = L.map("mapView").setView([-24.37, 31.0], 10);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {attribution:"© OpenStreetMap"}).addTo(map);
+      var colours = {wildlife:"#c9a96e",adventure:"#6b4c2a",dining:"#8b4820",culture:"#4a7a40"};
+      for (var i = 0; i < activities.length; i++) {
+        var a = activities[i];
+        var m = L.circleMarker([a.lat,a.lng],{radius:10,fillColor:colours[a.category]||"#c9a96e",color:"#fff",weight:2,fillOpacity:0.9}).addTo(map);
+        m.bindPopup("<b style='font-family:serif;font-size:1.05rem'>" + a.icon + " " + a.title + "</b><br><small style='color:#c9a96e'>" + a.price + "</small>");
+      }
+      for (var j = 0; j < stays.length; j++) {
+        if (stays[j].lat) {
+          var sm = L.circleMarker([stays[j].lat,stays[j].lng],{radius:8,fillColor:"#4a7ac4",color:"#fff",weight:2,fillOpacity:0.9}).addTo(map);
+          sm.bindPopup("<b style='font-family:serif'>🏨 " + stays[j].title + "</b><br><small style='color:#c9a96e'>" + stays[j].price + "</small>");
+        }
+      }
+    }
+    setTimeout(function(){ if(map) map.invalidateSize(); }, 100);
+  } else {
+    grid.style.display = "";
+    mapEl.classList.remove("visible");
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// DETAIL MODAL
+// ═══════════════════════════════════════════════════
+function openDetailModal(id) {
+  var a = null;
+  for (var i = 0; i < activities.length; i++) { if (activities[i].id === id) { a = activities[i]; break; } }
+  if (!a) return;
+  var platform = a.platform || "Viator";
+  var link = a.link || AFFILIATE.viator;
+  var stars = "";
+  for (var s = 0; s < Math.round(parseFloat(a.rating)); s++) stars += "★";
+  var firstImg = (a.images && a.images[0]) ? a.images[0] : "";
+  var imgStyle = firstImg ? " style=\"background-image:url('" + firstImg + "')\"" : "";
+  var inc = "", brg = "", inf = "";
+  if (a.includes) for (var j = 0; j < a.includes.length; j++) inc += "<li>" + a.includes[j] + "</li>";
+  if (a.brings)   for (var k = 0; k < a.brings.length; k++) brg += "<li>" + a.brings[k] + "</li>";
+  if (a.info)     for (var m = 0; m < a.info.length; m++) inf += "<li>" + a.info[m] + "</li>";
+  var html = "<div class=\"detail-hero\"><div class=\"detail-hero-bg " + a.bg + "\"" + imgStyle + "></div>";
+  html += "<div class=\"detail-hero-overlay\"></div><div class=\"detail-hero-meta\">";
+  html += "<div><div class=\"detail-category\">" + a.category + "</div><div class=\"detail-hero-title\">" + a.title + "</div></div>";
+  html += "<div class=\"detail-hero-price\">" + a.price + "<small>per person</small></div></div></div>";
+  html += "<div class=\"detail-body\"><div class=\"detail-rating-bar\"><span class=\"detail-stars\">" + stars + "</span>";
+  html += "<span class=\"detail-rating-text\"><strong>" + a.rating + " / 5</strong> &middot; " + a.reviews + " verified reviews &middot; " + (a.duration||"") + " &middot; Ages " + (a.minAge||"All") + "</span></div>";
+  html += "<p class=\"detail-desc\">" + (a.fullDesc||a.desc) + "</p><div class=\"detail-grid\">";
+  html += "<div class=\"detail-box\"><div class=\"detail-box-title\">&#10003; Included</div><ul class=\"detail-list\">" + inc + "</ul></div>";
+  html += "<div class=\"detail-box\"><div class=\"detail-box-title\">&#8594; What to Bring</div><ul class=\"detail-list brings\">" + brg + "</ul></div>";
+  html += "<div class=\"detail-box\" style=\"grid-column:1/-1\"><div class=\"detail-box-title\">&#9432; Good to Know</div><ul class=\"detail-list info\">" + inf + "</ul></div></div>";
+  html += "<div class=\"detail-cta\"><div class=\"detail-cta-left\"><div class=\"detail-cta-price\">" + a.price + "</div>";
+  html += "<div class=\"detail-cta-note\">Same price as booking direct &middot; No extra fees</div></div>";
+  html += "<button class=\"detail-book-btn\" onclick=\"window.open('" + link + "','_blank');closeDetailModal()\">Book on " + platform + " &rarr;</button>";
+  html += "<p class=\"detail-cancellation\">" + (a.cancellation||"") + " &middot; Secure checkout on " + platform + "</p></div></div>";
+  document.getElementById("detailContent").innerHTML = html;
+  document.getElementById("detailModal").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function closeDetailModal() { document.getElementById("detailModal").classList.remove("open"); document.body.style.overflow = ""; }
+function closeDetailOutside(e) { if (e.target === document.getElementById("detailModal")) closeDetailModal(); }
+
+// ═══════════════════════════════════════════════════
+// AFFILIATE MODAL
+// ═══════════════════════════════════════════════════
+function openAffiliateModal(id, type) {
+  var data = null; var platform = "Booking.com"; var link = AFFILIATE.booking; var icon = "🏨";
+  if (type === "activity") {
+    for (var i = 0; i < activities.length; i++) { if (activities[i].id === id) { data = activities[i]; break; } }
+    if (data) { platform = data.platform||"Viator"; link = data.link||AFFILIATE.viator; icon = "🎫"; }
+  } else {
+    data = stays[id];
+    if (data) { platform = data.platform||"Booking.com"; link = data.link||AFFILIATE.booking; icon = platform==="SafariNow"?"🏕️":"🏨"; }
+  }
+  if (!data) return;
+  document.getElementById("affCategory").textContent = type==="activity" ? data.category : data.type;
+  document.getElementById("affTitle").textContent = data.title;
+  document.getElementById("affBody").textContent = "You are about to be redirected to " + platform + " to book " + data.title + " securely.";
+  document.getElementById("affPlatformIcon").textContent = icon;
+  document.getElementById("affPlatformName").textContent = platform;
+  document.getElementById("affPlatformDesc").textContent = "Same price guaranteed &middot; Secure checkout";
+  document.getElementById("affLink").href = link;
+  document.getElementById("affiliateModal").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove("open"); document.body.style.overflow = ""; }
+function closeModalById(id, e) { if (e.target === document.getElementById(id)) closeModal(id); }
+
+// ═══════════════════════════════════════════════════
+// REVIEWS
+// ═══════════════════════════════════════════════════
+function loadReviews() {
+  var stored = [];
+  try { stored = JSON.parse(localStorage.getItem("siteReviews") || "[]"); } catch(e){}
+  var list = document.getElementById("reviewsList");
+  var noMsg = document.getElementById("noReviewsMsg");
+  var heading = document.getElementById("reviewsHeading");
+  if (!stored.length) { if(noMsg) noMsg.style.display="block"; if(heading) heading.style.display="none"; if(list) list.innerHTML=""; return; }
+  if(noMsg) noMsg.style.display="none"; if(heading) heading.style.display="block";
+  var html = "";
+  var rev = stored.slice().reverse();
+  for (var i = 0; i < rev.length; i++) {
+    var r = rev[i]; var s = "";
+    for (var j = 0; j < r.stars; j++) s += "★";
+    for (var k = r.stars; k < 5; k++) s += "☆";
+    html += "<div class=\"review-card\"><div class=\"review-stars\">" + s + "</div><p class=\"review-text\">" + r.text + "</p>";
+    html += "<div class=\"review-author\"><div class=\"review-avatar\">" + r.name.charAt(0).toUpperCase() + "</div>";
+    html += "<div><div class=\"review-name\">" + r.name + "</div><div class=\"review-date\">" + r.activity + " &middot; " + r.date + "</div></div></div></div>";
+  }
+  if (list) list.innerHTML = html;
+}
+
+function submitReview() {
+  var starsEl = document.querySelector("input[name='star']:checked");
+  var name = document.getElementById("reviewName").value.trim();
+  var activity = document.getElementById("reviewActivity").value.trim();
+  var text = document.getElementById("reviewText").value.trim();
+  if (!starsEl || !name || !text) { alert("Please fill in your name, rating and review."); return; }
+  var stored = [];
+  try { stored = JSON.parse(localStorage.getItem("siteReviews") || "[]"); } catch(e){}
+  stored.push({stars:parseInt(starsEl.value),name:name,activity:activity||"Hoedspruit and Beyond",text:text,date:new Date().toLocaleDateString("en-GB",{month:"short",year:"numeric"})});
+  localStorage.setItem("siteReviews", JSON.stringify(stored));
+  document.getElementById("reviewFormInner").style.display = "none";
+  document.getElementById("reviewThanks").classList.add("show");
+  loadReviews();
+}
+
+function showOperatorThanks(e) {
+  document.getElementById("operatorFormInner").style.display = "none";
+  document.getElementById("operatorThanks").classList.add("show");
+}
+
+function subscribeNewsletter() {
+  var email = document.getElementById("newsletterEmail").value.trim();
+  if (!email || email.indexOf("@") === -1) { alert("Please enter a valid email address."); return; }
+  document.getElementById("newsletterSuccess").classList.add("show");
+  document.getElementById("newsletterEmail").value = "";
+}
+
+// ═══════════════════════════════════════════════════
+// AI PLANNER
+// ═══════════════════════════════════════════════════
+async function generateItinerary() {
+  var days=document.getElementById("planDays").value,group=document.getElementById("planGroup").value;
+  var budget=document.getElementById("planBudget").value,activity=document.getElementById("planActivity").value;
+  var notes=document.getElementById("planNotes").value;
+  var btn=document.getElementById("planBtn"),btnText=document.getElementById("planBtnText");
+  var responseEl=document.getElementById("aiResponse"),responseText=document.getElementById("aiResponseText");
+  btn.disabled=true;btnText.innerHTML="Crafting your itinerary...";
+  responseEl.classList.remove("visible");
+  try {
+    var res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,messages:[{role:"user",
+        content:"You are a luxury safari expert for Hoedspruit and Greater Kruger, South Africa. Create a detailed "+days+" itinerary for: "+group+", budget: "+budget+", interests: "+activity+"."+(notes?" Notes: "+notes:"")+" Activities: morning/night game drives, guided bush walk, Blyde Canyon zip-lining, Olifants River rafting, ATV, Cheetah Walk at HESC, hot air balloon, bush boma dinner, Shangaan cultural village, horseback safari, scenic helicopter flight, boat cruise, fishing, photographic safari. Lodges: Khaya Ndlovu (boutique), Umlani Bushcamp (eco), Radisson Safari Hotel (family), Moditlo River Lodge (mid-range), Thornybush (luxury), Kings Camp (colonial), Pondoro Game Lodge (romantic), Kapama Karula (ultra-luxury), Jabulani Safari (ultra-luxury with elephants). Dining: 3 Bridges Cafe (riverside), Sleepers Restaurant (historic), The Hat and Creek (steakhouse), Blue Mountain Restaurant (fine dining). Day-by-day format. Under 500 words. End with why Hoedspruit is special."}]})});
+    var data=await res.json();
+    responseText.textContent=(data.content&&data.content[0]&&data.content[0].text)||"Unable to generate. Please try again.";
+    responseEl.classList.add("visible");
+    responseEl.scrollIntoView({behavior:"smooth",block:"nearest"});
+  } catch(err){responseText.textContent="Something went wrong. Please try again.";responseEl.classList.add("visible");}
+  btn.disabled=false;btnText.innerHTML="✦ &nbsp;Generate My Itinerary";
+}
+
+// ═══════════════════════════════════════════════════
+// AI CHAT
+// ═══════════════════════════════════════════════════
+var chatHistory = []; var chatOpen = false;
+function toggleChat(){chatOpen=!chatOpen;document.getElementById("chatPanel").classList.toggle("open",chatOpen);document.getElementById("chatToggle").textContent=chatOpen?"×":"🌿";}
+function sendSuggestion(btn){document.getElementById("chatInput").value=btn.textContent;document.getElementById("chatSuggestions").style.display="none";sendChat();}
+async function sendChat(){
+  var input=document.getElementById("chatInput");var msg=input.value.trim();if(!msg)return;
+  input.value="";addChatMsg(msg,"user");chatHistory.push({role:"user",content:msg});
+  var typing=addChatMsg("Thinking...","bot typing");
+  try{
+    var res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:400,
+        system:"You are a friendly travel assistant for Hoedspruit and Beyond. Activities: morning game drive R1,200, night drive R980, bush walk R750, zip-lining R850, rafting R680, ATV R750, Cheetah Walk R1,800, balloon R3,200, boma dinner R950, culture village R450, horseback R1,100, helicopter R2,800, boat cruise R520, fishing R580, photographic safari R2,200. Lodges: Khaya Ndlovu R5,990, Jabulani R14,000, Kings Camp R10,500, Kapama Karula R15,500, Pondoro R8,900, Sabi Sabi R12,500, Thornybush R8,400, Moditlo R5,200, Zandspruit R4,500, Radisson R3,200, Wildlife Estate R1,800, Umlani R4,200. Dining: 3 Bridges Cafe, Sleepers, Hat and Creek, Blue Mountain, Fig Tree. Be warm and concise.",
+        messages:chatHistory})});
+    var data=await res.json();
+    var reply=(data.content&&data.content[0]&&data.content[0].text)||"Having trouble, please try again!";
+    typing.remove();addChatMsg(reply,"bot");chatHistory.push({role:"assistant",content:reply});
+  }catch(err){typing.remove();addChatMsg("Sorry, having a moment! Please try again.","bot");}
+}
+function addChatMsg(text,cls){var msgs=document.getElementById("chatMessages");var div=document.createElement("div");div.className="chat-msg "+cls;div.textContent=text;msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;return div;}
+
+// ═══════════════════════════════════════════════════
+// NAV SCROLL
+// ═══════════════════════════════════════════════════
+window.addEventListener("scroll",function(){document.getElementById("mainNav").classList.toggle("scrolled",window.scrollY>60);});
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+renderHomePreviews();
+renderBlog();
+</script>
+</body>
+</html>
